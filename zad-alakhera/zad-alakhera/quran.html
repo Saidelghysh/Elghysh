@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>القرآن الكريم | زاد الآخرة</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕌</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<script>
+function renderPage(){
+  const c = document.getElementById("page-content");
+  c.innerHTML = `
+    <div class="page-heading">
+      <h1>القرآن الكريم</h1>
+      <p>استمع إلى القرآن الكريم كاملًا بأصوات نخبة من القراء - 114 سورة</p>
+    </div>
+    <div class="filter-bar">
+      <select id="reciter-select"></select>
+      <input type="text" id="surah-search" placeholder="ابحث عن سورة...">
+    </div>
+    <div class="list-rows" id="surah-list"></div>
+  `;
+
+  const sel = document.getElementById("reciter-select");
+  RECITERS.forEach(r=>{
+    const o = document.createElement("option");
+    o.value = r.id; o.textContent = r.name;
+    sel.appendChild(o);
+  });
+
+  function renderList(filter=""){
+    const list = document.getElementById("surah-list");
+    list.innerHTML = "";
+    const reciterId = sel.value;
+    const queue = [];
+    SURAHS.forEach((s,i)=>{
+      const num = i+1;
+      queue.push({title:`سورة ${s[0]}`, subtitle: sel.options[sel.selectedIndex].textContent, url: surahAudioUrl(reciterId, num)});
+    });
+    SURAHS.forEach((s,i)=>{
+      const num = i+1;
+      if(filter && !s[0].includes(filter)) return;
+      const row = document.createElement("div");
+      row.className = "row-item";
+      row.innerHTML = `
+        <div class="row-left">
+          <div class="row-num">${num}</div>
+          <div>
+            <div class="row-title">سورة ${s[0]}</div>
+            <div class="row-sub">${s[1]} آية · ${s[2]}</div>
+          </div>
+        </div>
+        <button class="row-play" title="إضافة للمفضلة" style="background:${isFavorite(surahAudioUrl(reciterId,num))?'var(--gold)':'var(--gold-dim)'}">${isFavorite(surahAudioUrl(reciterId,num))?'💚':'🤍'}</button>
+        <div class="row-play">▶</div>
+      `;
+      row.querySelector("button").onclick = (ev)=>{
+        ev.stopPropagation();
+        toggleFavorite({title:`سورة ${s[0]}`, subtitle:sel.options[sel.selectedIndex].textContent, url:surahAudioUrl(reciterId,num)});
+        renderList(filter);
+      };
+      row.querySelector(".row-play:last-child").onclick = ()=>playQueue(queue, num-1);
+      list.appendChild(row);
+    });
+  }
+
+  sel.onchange = ()=>renderList(document.getElementById("surah-search").value);
+  document.getElementById("surah-search").oninput = (e)=>renderList(e.target.value);
+  renderList();
+}
+</script>
+
+<script src="js/quran-data.js"></script>
+<script src="js/layout.js"></script>
+</body>
+</html>
