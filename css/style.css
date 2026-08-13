@@ -138,7 +138,7 @@ ul{list-style:none;}
 .hero-banner .tag{
   color:var(--gold-light); font-weight:700; margin-bottom:10px; font-size:1rem;
 }
-.hero-banner h2{font-size:2rem; margin-bottom:16px; font-weight:900;}
+.hero-banner h2{font-size:1.4rem; margin-bottom:12px; font-weight:700;}
 .hero-banner p{color:#dfe2e8; max-width:640px; margin:0 auto 22px; line-height:2;}
 .hero-btn{
   background:var(--gold); color:#1a1406; font-weight:700; padding:11px 26px;
