@@ -175,7 +175,7 @@ function wirePlayer(){
   });
 
   // راديو القرآن الكريم المباشر (إذاعة القرآن الكريم - القاهرة، عبر خدمة Radiojar الرسمية)
-  const RADIO_URL = "https://stream.radiojar.com/8s5u5tpdtwzuv";
+  const RADIO_URL = "https://stream.radiojar.com/0tpy1h0kxtzuv";
   let radioPlaying = false;
   on("radio-play","onclick", ()=>{
     if(!radioPlaying){
