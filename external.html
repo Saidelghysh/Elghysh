@@ -15,18 +15,24 @@ function renderPage(){
   c.innerHTML = `
     <div class="page-heading">
       <h1>حفلات خارجية</h1>
-      <p>تسجيلات صوتية نادرة من حفلات ومجالس القرآن للشيوخ الكبار</p>
+      <p>تسجيلات نادرة بأصوات كبار قراء العصر الذهبي للتلاوة المصرية</p>
     </div>
     <div class="card-grid" id="ext-grid"></div>
+    <p style="color:var(--text-muted); font-size:.82rem; margin-top:20px; text-align:center;">
+      ملاحظة: الشيخ محمد الليثي والشيخ شعبان الصياد رحمهما الله ليس لهما حاليًا مصدر برمجي مجاني موثوق برابط مباشر،
+      لذلك لم يُدرجا هنا تلقائيًا. تسجيلاتهما النادرة متاحة يدويًا على archive.org ويمكن إضافتها لاحقًا.
+    </p>
   `;
 
   const events = [
-    {title:"مجلس قرآني - سورة يوسف", reciterId:"husr", num:12, place:"القاهرة"},
-    {title:"حفل ختم القرآن - سورة الإسراء", reciterId:"minsh", num:17, place:"دمشق"},
-    {title:"مجلس تلاوة - سورة مريم", reciterId:"jhn", num:19, place:"مكة المكرمة"},
-    {title:"أمسية قرآنية - سورة الفرقان", reciterId:"sds", num:25, place:"المدينة المنورة"},
-    {title:"حفل رمضاني - سورة الأحزاب", reciterId:"afs", num:33, place:"الكويت"},
-    {title:"مجلس تلاوة - سورة الدخان", reciterId:"ajm", num:44, place:"الرياض"},
+    {title:"مجلس قرآني نادر - سورة يوسف", reciterId:"husr_mojawwad", num:12, place:"محمود خليل الحصري"},
+    {title:"حفل تاريخي - سورة الإسراء", reciterId:"minsh_mojawwad", num:17, place:"محمد صديق المنشاوي"},
+    {title:"تلاوة مجودة - سورة مريم", reciterId:"jhn", num:19, place:"عبدالباسط عبدالصمد"},
+    {title:"أمسية قرآنية - سورة الفرقان", reciterId:"tblawi", num:25, place:"محمد الطبلاوي"},
+    {title:"تسجيل إذاعي نادر - سورة الأحزاب", reciterId:"mustafa", num:33, place:"مصطفى إسماعيل"},
+    {title:"مجلس تلاوة - سورة الدخان", reciterId:"husr_mojawwad", num:44, place:"محمود خليل الحصري"},
+    {title:"حفل ختم القرآن - سورة يس", reciterId:"minsh_mojawwad", num:36, place:"محمد صديق المنشاوي"},
+    {title:"تلاوة خاشعة - سورة الرحمن", reciterId:"tblawi", num:55, place:"محمد الطبلاوي"},
   ];
 
   const grid = document.getElementById("ext-grid");
@@ -39,7 +45,7 @@ function renderPage(){
       <div class="thumb" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Microphone%20on%20stage.jpg')"></div>
       <div class="body">
         <h3>${e.title}</h3>
-        <p><span>${r.name}</span><span>${e.place}</span></p>
+        <p><span>${r.name}</span><span>▶ استماع</span></p>
       </div>`;
     card.onclick = ()=>playQueue(queue, idx);
     card.style.cursor = "pointer";
