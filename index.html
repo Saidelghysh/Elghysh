@@ -14,75 +14,179 @@
 function renderPage(){
   const c = document.getElementById("page-content");
   c.innerHTML = `
-    <section class="hero-banner">
-      <div class="tag">صدقة جارية</div>
-      <h2 id="sadaqa-name">جارٍ التحميل...</h2>
-      <p>اللهم اجعل هذا العمل نورًا له في قبره ورفعة في درجاته، واجعلنا وإياه من أهل الفردوس الأعلى</p>
-      <button class="hero-btn" id="dua-btn">🤍 الدعاء للوالد</button>
-    </section>
-
-    <section class="block">
-      <h2 class="block-title">المكتبة الرئيسية</h2>
-      <div class="card-grid">
-        <a class="lib-card" href="quran.html">
-          <div class="thumb" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Open%20Quran%20close%20up.jpg')"></div>
-          <div class="body"><h3>القرآن والتلاوات</h3><p><span>استمع لتلاوات القرآن الكريم</span><span>114 سورة</span></p></div>
-        </a>
-        <a class="lib-card" href="external.html">
-          <div class="thumb" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Microphone%20on%20stage.jpg')"></div>
-          <div class="body"><h3>حفلات خارجية</h3><p><span>تسجيلات صوتية نادرة</span><span>للشيوخ الكبار</span></p></div>
-        </a>
-        <a class="lib-card" href="ibtihalat.html">
-          <div class="thumb" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Ramadan%20Lantern.jpg')"></div>
-          <div class="body"><h3>الابتهالات والتواشيح</h3><p><span>ابتهالات ومدائح نبوية</span><span>أصوات عذبة</span></p></div>
-        </a>
-        <a class="lib-card" href="khawatir.html">
-          <div class="thumb" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Old%20book%20and%20glasses.jpg')"></div>
-          <div class="body"><h3>خواطر الشعراوي</h3><p><span>خواطر إيمانية رائعة</span><span>للشيخ الشعراوي</span></p></div>
-        </a>
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="hero-radio">
+          <span class="live-badge"><span class="dot"></span> بث مباشر</span>
+          <div class="radio-title">إذاعة القرآن الكريم - مصر</div>
+          <div class="radio-now">
+            <div class="lbl">استمع الآن</div>
+            <h3>إذاعة القرآن الكريم</h3>
+            <p>من القاهرة - جمهورية مصر العربية</p>
+          </div>
+          <div class="radio-controls">
+            <button class="radio-play-btn" id="radio-play">▶</button>
+            <div class="radio-progress"><i></i></div>
+            <span class="radio-quality">جودة عالية <i class="dot-green"></i></span>
+          </div>
+        </div>
+        <div class="hero-text">
+          <div class="crescent">🌙</div>
+          <h2>السلام عليكم</h2>
+          <p>نسأل الله أن يتقبل منا ومنكم صالح الأعمال</p>
+        </div>
       </div>
     </section>
 
-    <section class="block">
-      <h2 class="block-title">آخر التلاوات المضافة</h2>
-      <div class="hscroll" id="recent-recitations"></div>
-    </section>
+    <nav class="quick-access">
+      <a href="quran.html"><span class="qa-ico">📖</span><span>القرآن الكريم</span></a>
+      <a href="tilawat.html"><span class="qa-ico">🎙️</span><span>التلاوات النادرة</span></a>
+      <a href="ibtihalat.html"><span class="qa-ico">🎵</span><span>الابتهالات</span></a>
+      <a href="external.html"><span class="qa-ico">🕌</span><span>حفلات خارجية</span></a>
+      <a href="#prayer-panel"><span class="qa-ico">🕋</span><span>مواقيت الصلاة</span></a>
+      <a href="azkar.html"><span class="qa-ico">📿</span><span>الأذكار</span></a>
+      <a href="sadaqa.html"><span class="qa-ico">💚</span><span>الصدقة الجارية</span></a>
+      <a href="settings.html"><span class="qa-ico">⋯</span><span>المزيد</span></a>
+    </nav>
+
+    <div class="dashboard-grid">
+      <aside class="dash-col">
+        <div class="panel">
+          <h3>أذكار اليوم</h3>
+          <div class="azkar-mini" style="margin-top:12px">
+            <div class="azkar-cat" id="azkar-cat">أذكار الصباح</div>
+            <p class="azkar-text" id="azkar-text">جارٍ التحميل...</p>
+            <div class="azkar-source" id="azkar-source"></div>
+            <div class="azkar-nav">
+              <button id="azkar-next">›</button>
+              <span class="count" id="azkar-count">1/10</span>
+              <button id="azkar-prev">‹</button>
+            </div>
+          </div>
+          <button class="show-all-btn" onclick="location.href='azkar.html'">عرض كل الأذكار</button>
+        </div>
+
+        <div class="sadaqa-panel">
+          <div class="sadaqa-ico">💚</div>
+          <div>
+            <h3>صدقة جارية</h3>
+            <p class="sadaqa-dedication" id="sadaqa-name">هذا العمل صدقة جارية على روح الحاج عبد الحميد إبراهيم الغايش</p>
+            <button class="sadaqa-btn" id="dua-btn">ادعُ له الآن</button>
+          </div>
+        </div>
+      </aside>
+
+      <section class="dash-col">
+        <div class="panel-block">
+          <div class="panel-block-head">
+            <a href="external.html" class="see-all">عرض الكل</a>
+            <h3>حفلات خارجية</h3>
+          </div>
+          <a class="media-card" href="external.html" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Great%20Mosque%20of%20Mecca%20at%20night.jpg')">
+            <span class="media-caption">حفل الشيخ عبدالباسط عبدالصمد - ليبيا 1984</span>
+          </a>
+        </div>
+        <div class="panel-block">
+          <div class="panel-block-head">
+            <a href="tilawat.html" class="see-all">عرض الكل</a>
+            <h3>ليالي رمضان</h3>
+          </div>
+          <a class="media-card ramadan" href="tilawat.html" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Ramadan%20Lantern.jpg')">
+            <div class="mc-eyebrow">تلاوات وقيام الليل</div>
+            <div class="mc-title">ليالي رمضان</div>
+            <div class="mc-sub">أجمل التلاوات في ليالي رمضان المباركة</div>
+          </a>
+        </div>
+      </section>
+
+      <section class="dash-col">
+        <div class="panel-block">
+          <div class="panel-block-head">
+            <a href="tilawat.html" class="see-all">عرض الكل</a>
+            <h3>التلاوات النادرة</h3>
+          </div>
+          <div class="reciter-grid" id="rare-recitations"></div>
+        </div>
+        <div class="panel-block">
+          <div class="panel-block-head">
+            <a href="ibtihalat.html" class="see-all">عرض الكل</a>
+            <h3>الابتهالات</h3>
+          </div>
+          <div class="reciter-grid" id="ibtihalat-grid"></div>
+        </div>
+      </section>
+
+      <aside class="dash-col">
+        <div class="panel" id="prayer-panel">
+          <h3>مواقيت الصلاة</h3>
+          <div class="sub" id="prayer-location">جارٍ تحديد الموقع...</div>
+          <div class="prayer-list" id="prayer-list">
+            <div class="empty-msg">جارٍ تحميل المواقيت...</div>
+          </div>
+          <button class="show-all-btn" onclick="location.href='adhan.html'">عرض جميع المواقيت</button>
+        </div>
+      </aside>
+    </div>
   `;
 
-  document.getElementById("dua-btn").onclick = ()=>showToast("اللهم تقبل، آمين 🤍");
+  document.getElementById("dua-btn").onclick = ()=>showToast("اللهم اغفر له وارحمه واجعل هذا العمل نورًا له في قبره 🤍");
 
-  // صدقة جارية - تدوير أسماء توضيحية (نص تجريبي يمكن ربطه بقاعدة بيانات حقيقية لاحقًا)
-  const sadaqaNames = ["عبد الحميد إبراهيم الغايش", "فاطمة أحمد السيد", "محمد عبد الله الشريف"];
-  document.getElementById("sadaqa-name").textContent = sadaqaNames[Math.floor(Math.random()*sadaqaNames.length)];
-
-  // آخر التلاوات
-  const featured = [
-    {name:"سورة البقرة", reciter:"ماهر المعيقلي", num:2, reciterId:"ajm", dur:"1:45:23"},
-    {name:"سورة الكهف", reciter:"عبدالباسط عبدالصمد", num:18, reciterId:"jhn", dur:"00:40:12"},
-    {name:"سورة الرحمن", reciter:"سعد الغامدي", num:55, reciterId:"sds", dur:"00:20:15"},
-    {name:"سورة الملك", reciter:"مشاري العفاسي", num:67, reciterId:"afs", dur:"00:11:18"},
-    {name:"سورة يس", reciter:"محمد المنشاوي", num:36, reciterId:"minsh", dur:"00:23:34"},
+  // التلاوات النادرة (قراء مختارون)
+  const rareReciters = [
+    {name:"عبد الباسط عبد الصمد", reciterId:"jhn", num:18},
+    {name:"محمد صديق المنشاوي", reciterId:"minsh", num:36},
+    {name:"محمود خليل الحصري", reciterId:"husr", num:67},
+    {name:"مصطفى إسماعيل", reciterId:"ajm", num:55},
+    {name:"محمد رفعت", reciterId:"sds", num:2},
   ];
-  const wrap = document.getElementById("recent-recitations");
-  featured.forEach(f=>{
-    const url = surahAudioUrl(f.reciterId, f.num);
+  const rareWrap = document.getElementById("rare-recitations");
+  rareReciters.forEach(r=>{
+    const url = surahAudioUrl(r.reciterId, r.num);
     const el = document.createElement("div");
-    el.className = "rec-card";
+    el.className = "reciter-card";
     el.innerHTML = `
-      <div class="thumb" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Quran%20calligraphy.jpg')">
-        <div class="playbtn">▶</div>
-      </div>
-      <div class="body">
-        <h4>${f.name}</h4>
-        <p><span>${f.reciter}</span><span>${f.dur}</span></p>
-      </div>`;
-    el.onclick = ()=>playSingle(f.name, f.reciter, url);
-    wrap.appendChild(el);
+      <div class="reciter-avatar">🎙️<span class="play-dot">▶</span></div>
+      <div class="r-name">${r.name}</div>`;
+    el.onclick = ()=>playSingle(r.name, "تلاوة نادرة", url);
+    rareWrap.appendChild(el);
   });
+
+  // الابتهالات (مكتبة حقيقية - أول مقطع من كل مبتهل)
+  const ibtWrap = document.getElementById("ibtihalat-grid");
+  IBTIHALAT_LIBRARY.forEach(group=>{
+    const track = group.tracks[0];
+    const el = document.createElement("div");
+    el.className = "reciter-card";
+    el.innerHTML = `
+      <div class="reciter-avatar">🎵<span class="play-dot">▶</span></div>
+      <div class="r-name">${group.munshid}</div>`;
+    el.onclick = ()=>playSingle(track.title, group.munshid, track.url);
+    ibtWrap.appendChild(el);
+  });
+
+  // أذكار اليوم (widget)
+  const azkarList = (typeof AZKAR_CATEGORIES !== "undefined") ? AZKAR_CATEGORIES["أذكار الصباح"] : [];
+  let azkarIndex = 0;
+  function renderAzkar(){
+    if(!azkarList.length) return;
+    const item = azkarList[azkarIndex];
+    document.getElementById("azkar-text").textContent = item.text;
+    document.getElementById("azkar-source").textContent = `(رواه ${item.source})`;
+    document.getElementById("azkar-count").textContent = `${azkarIndex+1}/${azkarList.length}`;
+  }
+  renderAzkar();
+  document.getElementById("azkar-next").onclick = ()=>{
+    azkarIndex = (azkarIndex+1) % azkarList.length; renderAzkar();
+  };
+  document.getElementById("azkar-prev").onclick = ()=>{
+    azkarIndex = (azkarIndex-1+azkarList.length) % azkarList.length; renderAzkar();
+  };
 }
 </script>
 
 <script src="js/quran-data.js"></script>
+<script src="js/azkar-data.js"></script>
+<script src="js/ibtihalat-data.js"></script>
 <script src="js/layout.js"></script>
 </body>
 </html>

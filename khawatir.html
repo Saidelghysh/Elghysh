@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>خواطر إيمانية | زاد الآخرة</title>
+<title>خواطر الشيخ الشعراوي | زاد الآخرة</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕌</text></svg>">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -14,32 +14,51 @@ function renderPage(){
   const c = document.getElementById("page-content");
   c.innerHTML = `
     <div class="page-heading">
-      <h1>خواطر إيمانية</h1>
-      <p>خواطر وتأملات إيمانية قصيرة لتدبر آيات الله في الكون والنفس</p>
+      <h1>خواطر الشيخ الشعراوي</h1>
+      <p>تسجيلات صوتية حقيقية لخواطر ودروس فضيلة الشيخ محمد متولي الشعراوي رحمه الله، من أرشيف رقمي عام (Internet Archive)</p>
     </div>
-    <div id="khawatir-cards"></div>
+    <div id="kw-wrap"></div>
   `;
 
-  // ملاحظة: هذه خواطر أصلية عامة، وليست نصوصًا منقولة حرفيًا من أي مصدر محمي بحقوق النشر.
-  // يمكن استبدال المحتوى بمقتطفات مرخّصة رسميًا عند توفرها.
-  const thoughts = [
-    {t:"التفكر في خلق السماوات", body:"حين ترفع بصرك إلى السماء ليلًا وترى النجوم منثورة كحبات اللؤلؤ، تدرك أن هذا الكون المحكم لم يخلق عبثًا. قال تعالى: «إِنَّ فِي خَلْقِ السَّمَاوَاتِ وَالْأَرْضِ وَاخْتِلَافِ اللَّيْلِ وَالنَّهَارِ لَآيَاتٍ لِأُولِي الْأَلْبَابِ». التدبر في هذا الكون طريق مباشر لزيادة الإيمان."},
-    {t:"الصبر مفتاح الفرج", body:"الصبر ليس استسلامًا، بل هو قوة داخلية تُبقي القلب متعلقًا بالله في أحلك الظروف. كل ضيق يعقبه فرج، وكل عسر يعقبه يسر، كما وعد الله سبحانه في كتابه الكريم مرتين متتاليتين تأكيدًا لهذا المعنى."},
-    {t:"شكر النعم الخفية", body:"كثير من النعم لا نلتفت إليها إلا حين نفقدها: نعمة الصحة، نعمة الأمن، نعمة النوم الهادئ. تأمل نعمك الخفية اليوم واشكر الله عليها، فالشكر سبب لدوام النعمة وزيادتها."},
-    {t:"القلب السليم", body:"يوم لا ينفع مال ولا بنون إلا من أتى الله بقلب سليم. القلب السليم هو الذي يخلو من الحقد والحسد والغل، ويمتلئ بالمحبة والرحمة والرضا بقضاء الله."},
-  ];
+  const wrap = document.getElementById("kw-wrap");
 
-  const wrap = document.getElementById("khawatir-cards");
-  thoughts.forEach(th=>{
-    const card = document.createElement("div");
-    card.className = "text-card";
-    card.innerHTML = `<h3 style="color:var(--gold-light); margin-bottom:10px;">${th.t}</h3><p class="zekr-text" style="font-size:1rem;">${th.body}</p>`;
-    wrap.appendChild(card);
+  // قائمة تشغيل واحدة تضم كل المقاطع بالترتيب حتى يعمل "التالي/السابق" بينها كلها
+  const fullQueue = [];
+  KHAWATIR_LIBRARY.forEach(group=>{
+    group.tracks.forEach(t=>{
+      fullQueue.push({title:t.title, subtitle:"الشيخ محمد متولي الشعراوي", url:t.url});
+    });
+  });
+
+  let running = 0;
+  KHAWATIR_LIBRARY.forEach(group=>{
+    const section = document.createElement("div");
+    section.className = "panel-block";
+    section.style.marginBottom = "18px";
+    section.innerHTML = `
+      <div class="panel-block-head">
+        <span></span>
+        <h3>${group.category}</h3>
+      </div>
+      <div class="list-rows"></div>
+    `;
+    const rowsWrap = section.querySelector(".list-rows");
+    group.tracks.forEach(t=>{
+      const idx = running++;
+      const row = document.createElement("div");
+      row.className = "row-item";
+      row.style.cursor = "pointer";
+      row.innerHTML = `<div class="row-title">🎙️ ${t.title}</div><div class="row-sub">الشيخ محمد متولي الشعراوي — اضغط للاستماع</div>`;
+      row.onclick = ()=> playQueue(fullQueue, idx);
+      rowsWrap.appendChild(row);
+    });
+    wrap.appendChild(section);
   });
 }
 </script>
 
 <script src="js/quran-data.js"></script>
+<script src="js/khawatir-data.js"></script>
 <script src="js/layout.js"></script>
 </body>
 </html>
