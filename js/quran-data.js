@@ -42,8 +42,11 @@ const RECITERS = [
   {id:"jhn", name:"عبدالباسط عبدالصمد (مرتل)", server:"https://server7.mp3quran.net/basit/"},
   {id:"ajm", name:"أحمد العجمي", server:"https://server10.mp3quran.net/ajm/"},
   {id:"rifai", name:"هزاع البلوشي", server:"https://server13.mp3quran.net/hazza/"},
+  {id:"tblawi", name:"محمد الطبلاوي", server:"https://server12.mp3quran.net/tblawi/"},
+  {id:"mustafa", name:"مصطفى إسماعيل", server:"https://server8.mp3quran.net/mustafa/"},
+  {id:"husr_mojawwad", name:"محمود خليل الحصري (مجود)", server:"https://server13.mp3quran.net/husr/Almusshaf-Al-Mojawwad/"},
+  {id:"minsh_mojawwad", name:"محمد صديق المنشاوي (مجود)", server:"https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/"},
 ];
-
 function surahAudioUrl(reciterId, surahNumber){
   const r = RECITERS.find(x=>x.id===reciterId) || RECITERS[0];
   const num = String(surahNumber).padStart(3,"0");
