@@ -69,7 +69,7 @@ function renderPage(){
         <div class="sadaqa-panel">
           <div class="sadaqa-ico">💚</div>
           <div>
-            <h3>صدقة جارية</h3>
+<h3>صدقة جارية</h3>
             <p class="sadaqa-dedication" id="sadaqa-name">هذا العمل صدقة جارية على روح الحاج عبد الحميد إبراهيم الغايش</p>
             <button class="sadaqa-btn" id="dua-btn">ادعُ له الآن</button>
           </div>
@@ -131,6 +131,9 @@ function renderPage(){
 
   document.getElementById("dua-btn").onclick = ()=>showToast("اللهم اغفر له وارحمه واجعل هذا العمل نورًا له في قبره 🤍");
 
+// صدقة جارية
+  const sadaqaNames = ["عبد الحميد إبراهيم الغايش"];
+  document.getElementById("sadaqa-name").textContent = sadaqaNames[0];
   // التلاوات النادرة (قراء مختارون)
   const rareReciters = [
     {name:"عبد الباسط عبد الصمد", reciterId:"jhn", num:18},
@@ -151,7 +154,7 @@ function renderPage(){
     rareWrap.appendChild(el);
   });
 
-  // الابتهالات (مكتبة حقيقية - أول مقطع من كل مبتهل)
+// الابتهالات (مكتبة حقيقية - أول مقطع من كل مبتهل)
   const ibtWrap = document.getElementById("ibtihalat-grid");
   IBTIHALAT_LIBRARY.forEach(group=>{
     const track = group.tracks[0];
