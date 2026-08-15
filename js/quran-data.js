@@ -46,10 +46,27 @@ const RECITERS = [
   {id:"mustafa", name:"مصطفى إسماعيل", server:"https://server8.mp3quran.net/mustafa/"},
   {id:"husr_mojawwad", name:"محمود خليل الحصري (مجود)", server:"https://server13.mp3quran.net/husr/Almusshaf-Al-Mojawwad/"},
   {id:"minsh_mojawwad", name:"محمد صديق المنشاوي (مجود)", server:"https://server10.mp3quran.net/minsh/Almusshaf-Al-Mojawwad/"},
+  {id:"banna_mojawwad", name:"محمود علي البنا (مجود - حفلات)", server:"https://archive.org/download/Moujawad.Mahmoud_Ali_Al.Banna_by.Maam14/", ext:"ogg"},
 ];
 
 function surahAudioUrl(reciterId, surahNumber){
   const r = RECITERS.find(x=>x.id===reciterId) || RECITERS[0];
   const num = String(surahNumber).padStart(3,"0");
-  return r.server + num + ".mp3";
+  return r.server + num + "." + (r.ext || "mp3");
 }
+
+// تسجيلات نادرة حقيقية للشيخ محمد الليثي رحمه الله من أرشيف موثّق (Internet Archive)
+// أسماء الملفات الأصلية غير موحدة (نطاق آيات وليس سورة كاملة)، لذلك هي قائمة مستقلة
+const LAITHI_BASE = "https://archive.org/download/mohammad.allythy.mogawwad.uP.bY.ReDa.MoHamMeD/";
+const LAITHI_TRACKS = [
+  {title:"سورة يوسف (من الآية 30 إلى 83)", file:"012-Yusuf-From30-To83.ogg"},
+  {title:"سورة الإسراء (من الآية 1 إلى 44)", file:"017-Al-Isra_From1-To44.ogg"},
+  {title:"سورة الكهف (من الآية 27 إلى 99)", file:"018-Al-Kahf_From27-To99.ogg"},
+  {title:"سورة مريم (من الآية 18 إلى 28)", file:"019-Maryam_From18-To28.ogg"},
+  {title:"سورة طه (من الآية 1 إلى 55)", file:"020-Ta-Ha_From1-To55.ogg"},
+  {title:"سورة الأنبياء (من الآية 47 إلى 112)", file:"021-Al-Anbiya_From47-To112.ogg"},
+  {title:"سورة النمل (من الآية 15 إلى 53)", file:"027-An-Naml_From15-To53.ogg"},
+  {title:"سورة البقرة (من الآية 272 إلى 286)", file:"002-Al-Baqara_From272-To286.ogg"},
+  {title:"سورة آل عمران (من الآية 1 إلى 27)", file:"003-Aal-E-Imran_From1-To27.ogg"},
+  {title:"سورة إبراهيم (من الآية 23 إلى 52)", file:"014-Ibrahim_From23-To52.ogg"},
+];

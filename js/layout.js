@@ -195,7 +195,7 @@ function wirePlayer(){
   });
 
   // راديو القرآن الكريم المباشر (إذاعة القرآن الكريم - القاهرة)
-  const RADIO_URL = "https://stream.radiojar.com/0tpy1h0kxtzuv";
+  const RADIO_URL = "https://backup.qurango.net/radio/mix";
   let radioPlaying = false;
   document.getElementById("radio-play").onclick = ()=>{
     if(!radioPlaying){
