@@ -24,44 +24,69 @@ function buildShell(){
   const current = location.pathname.split("/").pop() || "index.html";
 
   shell.innerHTML = `
-    <header id="topnav">
+    <aside id="nav-col">
       <a href="index.html" class="brand">
-        <div class="brand-icon">🕌</div>
         <div>
           <h1>زاد الآخرة</h1>
-          <span>طريقك إلى الخير والسكينة</span>
+          <span>خير الزاد ليوم المعاد</span>
         </div>
+        <div class="brand-icon">🕌</div>
       </a>
       <nav class="nav-links">
         ${NAV_ITEMS.map(it=>`
           <a href="${it.href}" class="${current===it.href.split('#')[0] ? 'active':''}">
             <span>${it.label}</span>
+            <span class="nav-ico">${it.icon}</span>
           </a>`).join("")}
       </nav>
-      <div class="topnav-actions">
-        <div class="search-box">
-          <span>🔍</span>
-          <input id="global-search" placeholder="ابحث هنا...">
-          <button class="top-icon-btn" id="settings-btn" style="width:24px;height:24px;border:none;background:none;">⚙️</button>
-        </div>
-        <button class="top-icon-btn" id="theme-toggle">🌙</button>
-        <button class="login-btn" id="login-btn">تسجيل الدخول</button>
-      </div>
-    </header>
+    </aside>
 
     <main id="main-col">
+      <div id="topbar">
+        <button class="top-icon-btn" id="theme-toggle">🌙</button>
+        <button class="top-icon-btn" id="share-btn">🔗</button>
+        <div class="search-box">
+          <input id="global-search" placeholder="ابحث في زاد الآخرة...">
+          <span>🔍</span>
+        </div>
+      </div>
       <div id="page-content"></div>
     </main>
 
-    <footer id="site-footer">
-      <div class="visitor-counter">
-        <span class="vc-label">عدد زوار الموقع</span>
-        <img src="https://visitor-badge.laobi.icu/badge?page_id=saidelghysh.zad-elakhera&left_text=Visitors&left_color=0c1424&right_color=c9a961&format=true"
-             alt="عداد زوار الموقع" loading="lazy" onerror="this.style.display='none'; document.getElementById('vc-fallback').style.display='inline';">
-        <span id="vc-fallback" style="display:none; color:var(--text-muted); font-size:.78rem;">تعذّر تحميل العداد الآن</span>
+    <aside id="prayer-col">
+      <div class="panel" id="prayer-panel">
+        <h3>مواقيت الصلاة</h3>
+        <div class="sub" id="prayer-location">جارٍ تحديد الموقع...</div>
+        <div class="prayer-list" id="prayer-list">
+          <div class="empty-msg">جارٍ تحميل المواقيت...</div>
+        </div>
+        <div class="countdown-box">
+          <div class="lbl" id="countdown-label">الوقت المتبقي للصلاة القادمة</div>
+          <div class="val" id="countdown-val">--:--:--</div>
+        </div>
       </div>
-      <div class="footer-note">زاد الآخرة 🕌 صدقة جارية لوجه الله تعالى</div>
-    </footer>
+
+      <div class="panel radio-panel">
+        <span class="live-tag"><span class="dot"></span> مباشر</span>
+        <h3 style="margin-top:8px">إذاعة القرآن الكريم</h3>
+        <div class="sub">استمع إلى البث المباشر لإذاعة القرآن الكريم</div>
+        <div class="radio-controls">
+          <button id="radio-play">▶</button>
+          <div class="radio-progress"><i></i></div>
+          <span>🔊</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="adhan-card">
+          <div class="info">
+            <div class="lbl">الأذان الآن</div>
+            <div class="val" id="next-prayer-name">--</div>
+          </div>
+          <button class="adhan-btn" id="listen-adhan-btn">استمع للأذان</button>
+        </div>
+      </div>
+    </aside>
   `;
   document.body.prepend(shell);
 
@@ -146,68 +171,68 @@ function playPrev(){
   if(currentIndex > 0){ playQueue(currentQueue, currentIndex-1); }
 }
 
-function el(id){ return document.getElementById(id); }
-function on(id, evt, fn){ const node = el(id); if(node) node[evt] = fn; }
-
 function wirePlayer(){
-  on("p-play","onclick", togglePlay);
-  on("p-next","onclick", playNext);
-  on("p-prev","onclick", playPrev);
-  const vol = el("p-volume");
-  if(vol) vol.oninput = (e)=>{ audioEl.volume = e.target.value/100; };
+  document.getElementById("p-play").onclick = togglePlay;
+  document.getElementById("p-next").onclick = playNext;
+  document.getElementById("p-prev").onclick = playPrev;
+  document.getElementById("p-volume").oninput = (e)=>{ audioEl.volume = e.target.value/100; };
   audioEl.volume = 0.8;
 
   audioEl.addEventListener("timeupdate", ()=>{
-    if(el("p-cur")) el("p-cur").textContent = fmtTime(audioEl.currentTime);
-    if(el("p-dur")) el("p-dur").textContent = fmtTime(audioEl.duration);
+    document.getElementById("p-cur").textContent = fmtTime(audioEl.currentTime);
+    document.getElementById("p-dur").textContent = fmtTime(audioEl.duration);
     const pct = audioEl.duration ? (audioEl.currentTime/audioEl.duration*100) : 0;
-    if(el("p-bar-fill")) el("p-bar-fill").style.width = pct+"%";
+    document.getElementById("p-bar-fill").style.width = pct+"%";
   });
-  const pbar = el("p-bar");
-  if(pbar) pbar.addEventListener("click", (e)=>{
+  document.getElementById("p-bar").addEventListener("click", (e)=>{
     const rect = e.currentTarget.getBoundingClientRect();
     const ratio = (rect.right - e.clientX) / rect.width; // RTL
     if(audioEl.duration) audioEl.currentTime = ratio * audioEl.duration;
   });
   audioEl.addEventListener("ended", ()=>{
     if(currentIndex < currentQueue.length-1) playNext();
-    else if(el("p-play")) el("p-play").textContent="▶";
+    else document.getElementById("p-play").textContent="▶";
   });
 
-  // راديو القرآن الكريم المباشر (إذاعة القرآن الكريم - القاهرة، عبر خدمة Radiojar الرسمية)
-  const RADIO_URL = "https://stream.radiojar.com/8s5u5tpdtwzuv";
+  // راديو القرآن الكريم المباشر (إذاعة القرآن الكريم - القاهرة)
+  const RADIO_URL = "https://stream.radiojar.com/0tpy1h0kxtzuv";
   let radioPlaying = false;
-  on("radio-play","onclick", ()=>{
+  document.getElementById("radio-play").onclick = ()=>{
     if(!radioPlaying){
       playSingle("إذاعة القرآن الكريم", "بث مباشر", RADIO_URL);
-      if(el("radio-play")) el("radio-play").textContent = "⏸";
+      document.getElementById("radio-play").textContent = "⏸";
       radioPlaying = true;
     } else {
       audioEl.pause();
-      if(el("radio-play")) el("radio-play").textContent = "▶";
-      if(el("p-play")) el("p-play").textContent = "▶";
+      document.getElementById("radio-play").textContent = "▶";
+      document.getElementById("p-play").textContent = "▶";
       radioPlaying = false;
     }
-  });
+  };
 
-  on("listen-adhan-btn","onclick", ()=>{ location.href = "adhan.html"; });
+  document.getElementById("listen-adhan-btn").onclick = ()=>{
+    location.href = "adhan.html";
+  };
 
-  on("theme-toggle","onclick", ()=>{ document.body.classList.toggle("light-mode"); });
-  on("login-btn","onclick", ()=>{ showToast("تسجيل الدخول قريبًا بإذن الله"); });
+  document.getElementById("theme-toggle").onclick = ()=>{
+    document.body.classList.toggle("light-mode");
+  };
+  document.getElementById("share-btn").onclick = ()=>{
+    if(navigator.share){ navigator.share({title:document.title, url:location.href}); }
+    else { navigator.clipboard.writeText(location.href); showToast("تم نسخ رابط الصفحة"); }
+  };
 }
 
 /* ---------------- Prayer Times ---------------- */
 const PRAYER_NAMES = {Fajr:"الفجر", Sunrise:"الشروق", Dhuhr:"الظهر", Asr:"العصر", Maghrib:"المغرب", Isha:"العشاء"};
 
 function loadPrayerTimes(lat, lng, cityLabel){
-  if(!document.getElementById("prayer-list")) return; // اللوحة غير موجودة في هذه الصفحة
   const method = localStorage.getItem("zad_calc_method") || "4";
   const url = `https://api.aladhan.com/v1/timings/${Math.floor(Date.now()/1000)}?latitude=${lat}&longitude=${lng}&method=${method}`;
   fetch(url).then(r=>r.json()).then(data=>{
     const t = data.data.timings;
-    if(document.getElementById("prayer-location")) document.getElementById("prayer-location").textContent = cityLabel;
+    document.getElementById("prayer-location").textContent = cityLabel;
     const list = document.getElementById("prayer-list");
-    if(!list) return;
     const now = new Date();
     let nextName=null, nextDate=null;
     list.innerHTML = "";
@@ -218,7 +243,6 @@ function loadPrayerTimes(lat, lng, cityLabel){
       if(!nextDate && d > now){ nextDate = d; nextName = key; }
       const row = document.createElement("div");
       row.className = "prayer-row";
-      row.dataset.key = key;
       row.innerHTML = `<span class="name">${PRAYER_NAMES[key]}</span><span class="time">${timeStr}</span>`;
       list.appendChild(row);
     });
@@ -228,24 +252,19 @@ function loadPrayerTimes(lat, lng, cityLabel){
       const [h,m] = t.Fajr.split(" ")[0].split(":").map(Number);
       nextDate.setHours(h,m,0,0);
     }
-    const nextRow = list.querySelector(`[data-key="${nextName}"]`);
-    if(nextRow) nextRow.classList.add("active");
-    if(el("next-prayer-name")) el("next-prayer-name").textContent = PRAYER_NAMES[nextName];
-    if(el("countdown-label")) el("countdown-label").textContent = `الوقت المتبقي لصلاة ${PRAYER_NAMES[nextName]}`;
+    document.getElementById("next-prayer-name").textContent = PRAYER_NAMES[nextName];
+    document.getElementById("countdown-label").textContent = `الوقت المتبقي لصلاة ${PRAYER_NAMES[nextName]}`;
 
     setInterval(()=>{
       const diff = nextDate - new Date();
-      const val = diff<=0 ? "00:00:00" : (()=>{
-        const hh = String(Math.floor(diff/3600000)).padStart(2,"0");
-        const mm = String(Math.floor(diff/60000)%60).padStart(2,"0");
-        const ss = String(Math.floor(diff/1000)%60).padStart(2,"0");
-        return `${hh}:${mm}:${ss}`;
-      })();
-      if(el("countdown-val")) el("countdown-val").textContent = val;
+      if(diff<=0){ document.getElementById("countdown-val").textContent="00:00:00"; return; }
+      const hh = String(Math.floor(diff/3600000)).padStart(2,"0");
+      const mm = String(Math.floor(diff/60000)%60).padStart(2,"0");
+      const ss = String(Math.floor(diff/1000)%60).padStart(2,"0");
+      document.getElementById("countdown-val").textContent = `${hh}:${mm}:${ss}`;
     }, 1000);
   }).catch(()=>{
-    const l = document.getElementById("prayer-list");
-    if(l) l.innerHTML = `<div class="empty-msg">تعذّر تحميل المواقيت (تحقق من الاتصال بالإنترنت)</div>`;
+    document.getElementById("prayer-list").innerHTML = `<div class="empty-msg">تعذّر تحميل المواقيت (تحقق من الاتصال بالإنترنت)</div>`;
   });
 }
 
