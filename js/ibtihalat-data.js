@@ -17,6 +17,7 @@ const IBTIHALAT_LIBRARY = [
   },
   {
     munshid: "الشيخ سيد النقشبندي",
+    img: "https://commons.wikimedia.org/wiki/Special:FilePath/Syed Naqshbandi.jpg",
     tracks: [
       {title:"الله يا الله", url:"https://archive.org/download/Ebtehalat_Ramadan/%D8%A7%D9%84%D8%B4%D9%8A%D8%AE%20%D8%B3%D9%8A%D8%AF%20%D8%A7%D9%84%D9%86%D9%82%D8%B4%D8%A8%D9%86%D8%AF%D9%89%20%D8%A7%D9%84%D9%84%D9%87%20%D9%8A%D8%A7%D8%A7%D9%84%D9%84%D9%87.mp3"},
       {title:"يارب كرمك علينا يارب نصرك معانا", url:"https://archive.org/download/Ebtehalat_Ramadan/%D8%A7%D9%84%D8%B4%D9%8A%D8%AE%20%D8%B3%D9%8A%D8%AF%20%D8%A7%D9%84%D9%86%D9%82%D8%B4%D8%A8%D9%86%D8%AF%D9%8A%20%20%20%20%20%D9%8A%D8%A7%D8%B1%D8%A8%20%D9%83%D8%B1%D9%85%D9%83%20%D8%B9%D9%84%D9%8A%D9%86%D8%A7%20%20%D9%8A%D8%A7%D8%B1%D8%A8%20%D9%86%D8%B5%D8%B1%D9%83%20%D9%85%D8%B9%D8%A7%D9%86%D8%A7.mp3"},
@@ -33,6 +34,7 @@ const IBTIHALAT_LIBRARY = [
   },
   {
     munshid: "الشيخ عبد الباسط عبد الصمد",
+    img: "https://commons.wikimedia.org/wiki/Special:FilePath/عبدالباسط عبد الصمد رحمه الله.jpg",
     tracks: [
       {title:"ابتهال الفجر", url:"https://archive.org/download/Ebtehalat_Ramadan/%D8%A7%D8%A8%D8%AA%D9%87%D8%A7%D9%84%20%D8%A7%D9%84%D9%81%D8%AC%D8%B1%20-%20%D8%A7%D9%84%D8%B4%D9%8A%D8%AE%20%D8%B9%D8%A8%D8%AF%D8%A7%D9%84%D8%A8%D8%A7%D8%B3%D8%B7.mp3"},
     ]

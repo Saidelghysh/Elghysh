@@ -69,7 +69,7 @@ function renderPage(){
         <div class="sadaqa-panel">
           <div class="sadaqa-ico">💚</div>
           <div>
-<h3>صدقة جارية</h3>
+            <h3>صدقة جارية</h3>
             <p class="sadaqa-dedication" id="sadaqa-name">هذا العمل صدقة جارية على روح الحاج عبد الحميد إبراهيم الغايش</p>
             <button class="sadaqa-btn" id="dua-btn">ادعُ له الآن</button>
           </div>
@@ -131,16 +131,13 @@ function renderPage(){
 
   document.getElementById("dua-btn").onclick = ()=>showToast("اللهم اغفر له وارحمه واجعل هذا العمل نورًا له في قبره 🤍");
 
-// صدقة جارية
-  const sadaqaNames = ["عبد الحميد إبراهيم الغايش"];
-  document.getElementById("sadaqa-name").textContent = sadaqaNames[0];
-  // التلاوات النادرة (قراء مختارون)
+  // التلاوات النادرة (قراء مختارون) - بصورهم الحقيقية من ويكيميديا كومنز
   const rareReciters = [
-    {name:"عبد الباسط عبد الصمد", reciterId:"jhn", num:18},
-    {name:"محمد صديق المنشاوي", reciterId:"minsh", num:36},
-    {name:"محمود خليل الحصري", reciterId:"husr", num:67},
-    {name:"مصطفى إسماعيل", reciterId:"ajm", num:55},
-    {name:"محمد رفعت", reciterId:"sds", num:2},
+    {name:"عبد الباسط عبد الصمد", reciterId:"jhn", num:18, img:"https://commons.wikimedia.org/wiki/Special:FilePath/عبدالباسط عبد الصمد رحمه الله.jpg"},
+    {name:"محمد صديق المنشاوي", reciterId:"minsh", num:36, img:"https://commons.wikimedia.org/wiki/Special:FilePath/الشيخ محمد صديق المنشاوي.jpg"},
+    {name:"محمود خليل الحصري", reciterId:"husr", num:67, img:"https://commons.wikimedia.org/wiki/Special:FilePath/Hussary.jpg"},
+    {name:"مصطفى إسماعيل", reciterId:"ajm", num:55, img:"https://commons.wikimedia.org/wiki/Special:FilePath/الشيخ مصطفى إسماعيل (02) (cropped).jpg"},
+    {name:"محمد رفعت", reciterId:"sds", num:2, img:"https://commons.wikimedia.org/wiki/Special:FilePath/Rifaat quran.jpg"},
   ];
   const rareWrap = document.getElementById("rare-recitations");
   rareReciters.forEach(r=>{
@@ -148,20 +145,27 @@ function renderPage(){
     const el = document.createElement("div");
     el.className = "reciter-card";
     el.innerHTML = `
-      <div class="reciter-avatar">🎙️<span class="play-dot">▶</span></div>
+      <div class="reciter-avatar">
+        <img src="${r.img}" alt="${r.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <span class="avatar-fallback" style="display:none">🎙️</span>
+        <span class="play-dot">▶</span>
+      </div>
       <div class="r-name">${r.name}</div>`;
     el.onclick = ()=>playSingle(r.name, "تلاوة نادرة", url);
     rareWrap.appendChild(el);
   });
 
-// الابتهالات (مكتبة حقيقية - أول مقطع من كل مبتهل)
+  // الابتهالات (مكتبة حقيقية - أول مقطع من كل مبتهل)
   const ibtWrap = document.getElementById("ibtihalat-grid");
   IBTIHALAT_LIBRARY.forEach(group=>{
     const track = group.tracks[0];
     const el = document.createElement("div");
     el.className = "reciter-card";
+    const avatarInner = group.img
+      ? `<img src="${group.img}" alt="${group.munshid}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span class="avatar-fallback" style="display:none">🎵</span>`
+      : `<span class="avatar-fallback">🎵</span>`;
     el.innerHTML = `
-      <div class="reciter-avatar">🎵<span class="play-dot">▶</span></div>
+      <div class="reciter-avatar">${avatarInner}<span class="play-dot">▶</span></div>
       <div class="r-name">${group.munshid}</div>`;
     el.onclick = ()=>playSingle(track.title, group.munshid, track.url);
     ibtWrap.appendChild(el);
