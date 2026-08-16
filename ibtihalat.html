@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الابتهالات والتواشيح | زاد الآخرة</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕌</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<script>
+function renderPage(){
+  const c = document.getElementById("page-content");
+  c.innerHTML = `
+    <div class="page-heading">
+      <h1>الابتهالات والتواشيح</h1>
+      <p>ابتهالات ومدائح نبوية بأصوات عذبة - يمكن ربط هذا القسم بمكتبة ابتهالات خاصة لاحقًا</p>
+    </div>
+    <div class="card-grid" id="ib-grid"></div>
+  `;
+
+  // ملاحظة: لا توجد حاليًا واجهة برمجية مجانية موحّدة للابتهالات بجودة موثوقة،
+  // لذا يعرض هذا القسم حاليًا تلاوات قرآنية مختارة بصوت هادئ تصلح كابتهالات تمهيدية،
+  // ويمكن استبدالها لاحقًا بروابط ملفات ابتهالات حقيقية بمجرد توفرها.
+  const items = [
+    {title:"يا رب صلِّ على محمد - افتتاحية", reciterId:"jhn", num:1},
+    {title:"توسل وابتهال - سورة الضحى", reciterId:"husr", num:93},
+    {title:"مناجاة - سورة الشرح", reciterId:"minsh", num:94},
+    {title:"دعاء وابتهال - سورة القدر", reciterId:"afs", num:97},
+    {title:"تسبيح وتهليل - سورة الإخلاص", reciterId:"sds", num:112},
+    {title:"استغفار - سورة النصر", reciterId:"ajm", num:110},
+  ];
+
+  const grid = document.getElementById("ib-grid");
+  const queue = items.map(e=>({title:e.title, subtitle:RECITERS.find(r=>r.id===e.reciterId).name, url:surahAudioUrl(e.reciterId,e.num)}));
+  items.forEach((e,idx)=>{
+    const r = RECITERS.find(x=>x.id===e.reciterId);
+    const card = document.createElement("div");
+    card.className = "lib-card";
+    card.style.cursor = "pointer";
+    card.innerHTML = `
+      <div class="thumb" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Ramadan%20Lantern.jpg')"></div>
+      <div class="body">
+        <h3>${e.title}</h3>
+        <p><span>${r.name}</span><span>▶ استماع</span></p>
+      </div>`;
+    card.onclick = ()=>playQueue(queue, idx);
+    grid.appendChild(card);
+  });
+}
+</script>
+
+<script src="js/quran-data.js"></script>
+<script src="js/layout.js"></script>
+</body>
+</html>
