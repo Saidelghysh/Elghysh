@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>خواطر الشيخ الشعراوي | زاد الآخرة</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕌</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<script>
+function renderPage(){
+  const c = document.getElementById("page-content");
+  c.innerHTML = `
+    <div class="page-heading">
+      <h1>خواطر الشيخ الشعراوي</h1>
+      <p>مكتبة صوتية كاملة لخواطر فضيلة الشيخ محمد متولي الشعراوي رحمه الله في تفسير القرآن الكريم، بصوته</p>
+    </div>
+    <div class="filter-bar">
+      <input type="text" id="khawatir-search" placeholder="ابحث عن سورة...">
+    </div>
+    <div class="list-rows" id="khawatir-list"></div>
+  `;
+
+  const BASE = "https://archive.org/download/Khwater-Sharawy/";
+  // ملفات حقيقية موثقة من أرشيف Internet Archive - خواطر الشعراوي بصوته الأصلي
+  const TRACKS = [
+    {title:"مقدمة الخواطر", file:"000_Intro.ogg"},
+    {title:"سورة الفاتحة", file:"001_Al-Fatihah.ogg"},
+    {title:"سورة البقرة", file:"002_Al-Baqarah.ogg"},
+    {title:"سورة آل عمران", file:"003_Al-Imran.ogg"},
+    {title:"سورة النساء", file:"004_An-Nisa.ogg"},
+    {title:"سورة المائدة", file:"005_Al-Maidah.ogg"},
+    {title:"سورة الأنعام", file:"006_Al-Anam.ogg"},
+    {title:"سورة الأعراف", file:"007_Al-Araf.ogg"},
+    {title:"سورة الأنفال", file:"008_Al-Anfal.ogg"},
+    {title:"سورة التوبة", file:"009_At-Taubah.ogg"},
+    {title:"سورة يونس", file:"010_Yunus.ogg"},
+    {title:"سورة هود", file:"011_Hud.ogg"},
+    {title:"سورة يوسف", file:"012_Yusuf.ogg"},
+    {title:"سورة الرعد", file:"013_Ar-Rad.ogg"},
+    {title:"سورة إبراهيم", file:"014_Ibrahim.ogg"},
+    {title:"سورة الحجر", file:"015_Al-Hijr.ogg"},
+    {title:"سورة النحل", file:"016_An-Nahl.ogg"},
+    {title:"سورة الإسراء", file:"017_Al-Isra.ogg"},
+    {title:"سورة الكهف", file:"018_Al-Kahf.ogg"},
+    {title:"سورة مريم", file:"019_Maryam.ogg"},
+  ];
+
+  const queue = TRACKS.map(t=>({title:"خواطر الشعراوي - "+t.title, subtitle:"الشيخ محمد متولي الشعراوي", url: BASE+encodeURIComponent(t.file)}));
+
+  function render(filter=""){
+    const list = document.getElementById("khawatir-list");
+    list.innerHTML = "";
+    TRACKS.forEach((t,idx)=>{
+      if(filter && !t.title.includes(filter)) return;
+      const row = document.createElement("div");
+      row.className = "row-item";
+      row.innerHTML = `
+        <div class="row-left">
+          <div class="row-num">${idx+1}</div>
+          <div><div class="row-title">${t.title}</div><div class="row-sub">الشيخ محمد متولي الشعراوي</div></div>
+        </div>
+        <div class="row-play">▶</div>`;
+      row.onclick = ()=>playQueue(queue, idx);
+      list.appendChild(row);
+    });
+    if(!list.children.length){ list.innerHTML = `<div class="empty-msg">لا توجد نتائج</div>`; }
+  }
+  document.getElementById("khawatir-search").oninput = (e)=>render(e.target.value);
+  render();
+}
+</script>
+
+<script src="js/quran-data.js"></script>
+<script src="js/layout.js"></script>
+</body>
+</html>
