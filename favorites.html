@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المفضلة | زاد الآخرة</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕌</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="offline-fallback" style="display:none; position:fixed; inset:0; z-index:9999; background:#0a1120; color:#f1eee6; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; font-family:'Tajawal',sans-serif;">
+  <div style="font-size:3rem; margin-bottom:16px;">🕌</div>
+  <h2 style="color:#e3cb8f; margin-bottom:10px; font-size:1.3rem;">عذرًا، حدثت مشكلة في تحميل الموقع</h2>
+  <p style="color:#8a93a8; max-width:420px; line-height:1.9; margin-bottom:22px;">
+    قد يكون السبب ضعف أو انقطاع في اتصالك بالإنترنت، أو أن الموقع يمر حاليًا بأعمال تحديث وصيانة بسيطة.
+    برجاء التأكد من اتصالك بالإنترنت والمحاولة مرة أخرى بعد قليل.
+  </p>
+  <button onclick="location.reload()" style="background:#c9a961; color:#1a1406; font-weight:700; padding:11px 28px; border-radius:30px; border:none; font-size:.95rem; cursor:pointer; font-family:inherit;">
+    🔄 إعادة المحاولة
+  </button>
+</div>
+<script>
+  (function(){
+    function showFallback(){
+      var el = document.getElementById("offline-fallback");
+      if(el) el.style.display = "flex";
+    }
+    setTimeout(function(){
+      if(!document.getElementById("app-shell")){ showFallback(); }
+    }, 5000);
+    window.addEventListener("offline", showFallback);
+  })();
+</script>
+
+
+<script>
+function renderPage(){
+  const c = document.getElementById("page-content");
+  c.innerHTML = `
+    <div class="page-heading">
+      <h1>المفضلة</h1>
+      <p>كل ما أضفته إلى المفضلة من تلاوات وسور قرآنية</p>
+    </div>
+    <div class="list-rows" id="fav-list"></div>
+  `;
+  const favs = getFavorites();
+  const list = document.getElementById("fav-list");
+  if(!favs.length){ list.innerHTML = `<div class="empty-msg">لا توجد عناصر في المفضلة بعد. أضف تلاواتك المفضلة من صفحة القرآن الكريم 🤍</div>`; return; }
+  favs.forEach((f,idx)=>{
+    const row = document.createElement("div");
+    row.className = "row-item";
+    row.innerHTML = `
+      <div class="row-left">
+        <div class="row-num">${idx+1}</div>
+        <div><div class="row-title">${f.title}</div><div class="row-sub">${f.subtitle||""}</div></div>
+      </div>
+      <div class="row-play">▶</div>`;
+    row.onclick = ()=>playQueue(favs, idx);
+    list.appendChild(row);
+  });
+}
+</script>
+
+<script src="js/quran-data.js"></script>
+<script src="js/layout.js"></script>
+</body>
+</html>
