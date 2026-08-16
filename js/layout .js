@@ -174,17 +174,18 @@ function wirePlayer(){
     else if(el("p-play")) el("p-play").textContent="▶";
   });
 
-  // راديو القرآن الكريم المباشر - 3 روابط احتياطية تُجرَّب تلقائيًا لو أي رابط تعطل
+  // راديو القرآن الكريم المباشر - عدة روابط HTTPS يتم تجربتها تلقائيًا واحدًا وراء الآخر
   const RADIO_SOURCES = [
-    "https://stream.radiojar.com/8s5u5tpdtwzuv",
     "https://backup.qurango.net/radio/mix",
-    "http://live.mp3quran.net:9960/",
+    "https://backup.qurango.net/radio/tarateel",
+    "https://stream.radiojar.com/8s5u5tpdtwzuv",
   ];
   let radioPlaying = false;
   let radioSourceIndex = 0;
 
   function tryRadioSource(i){
     if(i >= RADIO_SOURCES.length){
+      console.error("زاد الآخرة: فشلت كل روابط البث المباشر المتاحة.");
       showToast("تعذّر الاتصال بالبث المباشر حاليًا، حاول لاحقًا");
       radioPlaying = false;
       if(el("radio-play")) el("radio-play").textContent = "▶";
@@ -192,8 +193,16 @@ function wirePlayer(){
       return;
     }
     radioSourceIndex = i;
+    console.log("زاد الآخرة: تجربة رابط البث رقم", i, RADIO_SOURCES[i]);
     audioEl.src = RADIO_SOURCES[i];
-    audioEl.play().catch(()=> tryRadioSource(i+1));
+    audioEl.load();
+    const playPromise = audioEl.play();
+    if(playPromise && playPromise.catch){
+      playPromise.catch(err=>{
+        console.error("زاد الآخرة: فشل تشغيل الرابط", RADIO_SOURCES[i], err);
+        tryRadioSource(i+1);
+      });
+    }
     if(el("pt-title")) el("pt-title").textContent = "إذاعة القرآن الكريم";
     if(el("pt-sub")) el("pt-sub").textContent = "بث مباشر";
   }
@@ -213,8 +222,9 @@ function wirePlayer(){
     }
   });
 
-  // لو حصل عطل فجأة أثناء التشغيل (انقطاع الشبكة) جرّب الرابط التالي تلقائيًا
+  // لو حصل عطل فجأة أثناء التشغيل (انقطاع الشبكة أو تعطل السيرفر) جرّب الرابط التالي تلقائيًا
   audioEl.addEventListener("error", ()=>{
+    console.error("زاد الآخرة: حدث خطأ audio element", audioEl.error);
     if(radioPlaying) tryRadioSource(radioSourceIndex+1);
   });
 
