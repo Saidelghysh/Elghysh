@@ -117,10 +117,36 @@ function playQueue(queue, index){
   currentIndex = index;
   const item = queue[index];
   audioEl.src = item.url;
-  audioEl.play().catch(()=> showToast("تعذّر تشغيل الصوت الآن"));
+  audioEl.load();
+
   if(el("pt-title")) el("pt-title").textContent = item.title;
-  if(el("pt-sub")) el("pt-sub").textContent = item.subtitle || "زاد الآخرة";
-  if(el("p-play")) el("p-play").textContent = "⏸";
+  if(el("pt-sub")) el("pt-sub").textContent = "⏳ جارٍ التحميل... " + (item.subtitle || "زاد الآخرة");
+  if(el("p-play")) el("p-play").textContent = "⏳";
+
+  // نمهل الملف حتى 25 ثانية قبل ما نعتبره فشل (بعض الملفات كبيرة الحجم والتحميل من الأرشيف قد يبطئ أحيانًا)
+  let settled = false;
+  const onPlaying = ()=>{
+    settled = true;
+    if(el("pt-sub")) el("pt-sub").textContent = item.subtitle || "زاد الآخرة";
+    if(el("p-play")) el("p-play").textContent = "⏸";
+    audioEl.removeEventListener("playing", onPlaying);
+  };
+  audioEl.addEventListener("playing", onPlaying);
+
+  const playPromise = audioEl.play();
+  if(playPromise && playPromise.catch){
+    playPromise.catch(()=>{
+      // ما نستعجلش برسالة الفشل - ممكن يكون لسه بيحمّل
+    });
+  }
+
+  setTimeout(()=>{
+    if(!settled && audioEl.src === item.url && audioEl.paused){
+      showToast("الملف بياخد وقت أطول من المتوقع... تقدر تفتحه مباشرة من زر ↗ بجانبه");
+      if(el("pt-sub")) el("pt-sub").textContent = item.subtitle || "زاد الآخرة";
+      if(el("p-play")) el("p-play").textContent = "▶";
+    }
+  }, 25000);
 }
 
 function playSingle(title, subtitle, url){

@@ -72,12 +72,17 @@ function renderPage(){
             <h3>إذاعة القرآن الكريم</h3>
             <p>من القاهرة - جمهورية مصر العربية</p>
           </div>
-          <div class="radio-controls">
-            <button class="radio-play-btn" id="radio-play">▶</button>
-            <div class="radio-progress"><i></i></div>
-            <span class="radio-quality">جودة عالية <i class="dot-green"></i></span>
+          <audio controls preload="none" style="width:100%; height:36px; margin-top:8px; border-radius:20px;">
+            <source src="https://backup.qurango.net/radio/mix" type="audio/mpeg">
+            <source src="https://backup.qurango.net/radio/tarateel" type="audio/mpeg">
+            <source src="https://stream.radiojar.com/8s5u5tpdtwzuv" type="audio/mpeg">
+            متصفحك لا يدعم تشغيل الصوت مباشرة.
+          </audio>
+          <div style="display:flex; gap:10px; justify-content:center; margin-top:8px; font-size:.68rem;">
+            <a href="https://backup.qurango.net/radio/mix" target="_blank" rel="noopener" style="color:var(--text-muted);">رابط 1 ↗</a>
+            <a href="https://backup.qurango.net/radio/tarateel" target="_blank" rel="noopener" style="color:var(--text-muted);">رابط 2 ↗</a>
+            <a href="https://stream.radiojar.com/8s5u5tpdtwzuv" target="_blank" rel="noopener" style="color:var(--text-muted);">رابط 3 ↗</a>
           </div>
-          <a href="https://backup.qurango.net/radio/mix" target="_blank" rel="noopener" style="display:block; margin-top:10px; font-size:.7rem; color:var(--text-muted); text-align:center;">تجربة الرابط مباشرة في تبويب جديد ↗</a>
         </div>
         <div class="hero-text">
           <div class="crescent">🌙</div>
