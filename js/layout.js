@@ -1,21 +1,28 @@
 /* =========================================================
-   زاد الآخرة - التخطيط المشترك لكل الصفحات
+   زاد الآخرة - الهيكل العام المشترك بين كل الصفحات
    ========================================================= */
 
 const NAV_ITEMS = [
   {href:"index.html", label:"الرئيسية", icon:"🏠"},
   {href:"quran.html", label:"القرآن الكريم", icon:"📖"},
-  {href:"tilawat.html", label:"المكتبة الصوتية", icon:"🎧"},
-  {href:"tilawat.html#recitations", label:"التلاوات", icon:"🎙️"},
-  {href:"external.html", label:"حفلات خارجية", icon:"🔊"},
-  {href:"ibtihalat.html", label:"الابتهالات", icon:"⭐"},
+  {href:"tilawat.html", label:"التلاوات النادرة", icon:"🎙️"},
+  {href:"external.html", label:"الحفلات الخارجية", icon:"🕌"},
+  {href:"ibtihalat.html", label:"الابتهالات", icon:"🎵"},
   {href:"khawatir.html", label:"خواطر الشعراوي", icon:"✍️"},
   {href:"azkar.html", label:"الأذكار", icon:"📿"},
-  {href:"adhan.html", label:"الأذان", icon:"🕌"},
-  {href:"sadaqa.html", label:"صدقة جارية", icon:"💚"},
-  {href:"favorites.html", label:"المفضلة", icon:"🤍"},
+  {href:"adhan.html", label:"مواقيت الصلاة", icon:"🕋"},
+  {href:"sadaqa.html", label:"الصدقة الجارية", icon:"💚"},
+  {href:"favorites.html", label:"المفضلة", icon:"⭐"},
   {href:"settings.html", label:"الإعدادات", icon:"⚙️"},
 ];
+
+const PRAYER_NAMES = {
+  Fajr:"الفجر", Sunrise:"الشروق", Dhuhr:"الظهر", Asr:"العصر", Maghrib:"المغرب", Isha:"العشاء"
+};
+
+let currentQueue = [];
+let currentIndex = -1;
+const audioEl = new Audio();
 
 function buildShell(){
   const shell = document.createElement("div");
@@ -24,147 +31,100 @@ function buildShell(){
   const current = location.pathname.split("/").pop() || "index.html";
 
   shell.innerHTML = `
-    <aside id="nav-col">
+    <header id="topnav">
       <a href="index.html" class="brand">
+        <div class="brand-icon">🕌</div>
         <div>
           <h1>زاد الآخرة</h1>
-          <span>خير الزاد ليوم المعاد</span>
+          <span>طريقك إلى الخير والسكينة</span>
         </div>
-        <div class="brand-icon">🕌</div>
       </a>
       <nav class="nav-links">
         ${NAV_ITEMS.map(it=>`
           <a href="${it.href}" class="${current===it.href.split('#')[0] ? 'active':''}">
             <span>${it.label}</span>
-            <span class="nav-ico">${it.icon}</span>
           </a>`).join("")}
       </nav>
-    </aside>
+      <div class="topnav-actions">
+        <div class="search-box">
+          <span>🔍</span>
+          <input id="global-search" placeholder="ابحث هنا...">
+          <button class="top-icon-btn" id="settings-btn" style="width:24px;height:24px;border:none;background:none;">⚙️</button>
+        </div>
+        <button class="top-icon-btn" id="theme-toggle">🌙</button>
+        <button class="login-btn" id="login-btn">تسجيل الدخول</button>
+      </div>
+    </header>
 
     <main id="main-col">
-      <div id="topbar">
-        <button class="top-icon-btn" id="theme-toggle">🌙</button>
-        <button class="top-icon-btn" id="share-btn">🔗</button>
-        <div class="search-box">
-          <input id="global-search" placeholder="ابحث في زاد الآخرة...">
-          <span>🔍</span>
-        </div>
-        <div class="top-icon-btn" id="visitor-badge" title="عدد زوار الموقع" style="width:auto; padding:0 16px; gap:6px; font-size:.8rem; white-space:nowrap;">
-          👁️ <span id="visitor-count">...</span>
-        </div>
-      </div>
       <div id="page-content"></div>
     </main>
 
-    <aside id="prayer-col">
-      <div class="panel" id="prayer-panel">
-        <h3>مواقيت الصلاة</h3>
-        <div class="sub" id="prayer-location">جارٍ تحديد الموقع...</div>
-        <div class="prayer-list" id="prayer-list">
-          <div class="empty-msg">جارٍ تحميل المواقيت...</div>
-        </div>
-        <div class="countdown-box">
-          <div class="lbl" id="countdown-label">الوقت المتبقي للصلاة القادمة</div>
-          <div class="val" id="countdown-val">--:--:--</div>
-        </div>
+    <footer id="site-footer">
+      <div class="visitor-counter">
+        <span class="vc-label">عدد زوار الموقع</span>
+        <img src="https://visitor-badge.laobi.icu/badge?page_id=saidelghysh.zad-elakhera&left_text=Visitors&left_color=0c1424&right_color=c9a961&format=true"
+             alt="عداد زوار الموقع" loading="lazy" onerror="this.style.display='none'; document.getElementById('vc-fallback').style.display='inline';">
+        <span id="vc-fallback" style="display:none; color:var(--text-muted); font-size:.78rem;">تعذّر تحميل العداد الآن</span>
       </div>
+      <div class="footer-note">زاد الآخرة 🕌 صدقة جارية لوجه الله تعالى</div>
+    </footer>
 
-      <div class="panel radio-panel">
-        <span class="live-tag"><span class="dot"></span> مباشر</span>
-        <h3 style="margin-top:8px">إذاعة القرآن الكريم - القاهرة</h3>
-        <div class="sub">استمع إلى البث المباشر لإذاعة القرآن الكريم من القاهرة</div>
-        <div class="radio-controls">
-          <button id="radio-play">▶</button>
-          <div class="radio-progress"><i></i></div>
-          <span>🔊</span>
+    <div id="player-bar">
+      <div class="p-track">
+        <img id="pt-cover" src="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23131f36%22/><text x=%2250%22 y=%2262%22 font-size=%2245%22 text-anchor=%22middle%22>🕌</text></svg>" alt="">
+        <div>
+          <div class="p-title" id="pt-title">لم يتم اختيار مقطع</div>
+          <div class="p-sub" id="pt-sub">زاد الآخرة</div>
         </div>
       </div>
-
-      <div class="panel">
-        <div class="adhan-card">
-          <div class="info">
-            <div class="lbl">الأذان الآن</div>
-            <div class="val" id="next-prayer-name">--</div>
-          </div>
-          <button class="adhan-btn" id="listen-adhan-btn">استمع للأذان</button>
+      <div class="p-center">
+        <div class="p-controls">
+          <button id="p-shuffle">🔀</button>
+          <button id="p-prev">⏮</button>
+          <button id="p-play">▶</button>
+          <button id="p-next">⏭</button>
+          <button id="p-repeat">🔁</button>
+        </div>
+        <div class="p-progress">
+          <span id="p-cur">00:00</span>
+          <div class="p-bar" id="p-bar"><div class="p-bar-fill" id="p-bar-fill"></div></div>
+          <span id="p-dur">00:00</span>
         </div>
       </div>
-    </aside>
+      <div class="p-right">
+        <span>🔊</span>
+        <input type="range" id="p-volume" min="0" max="100" value="80">
+        <button id="p-settings">⚙️</button>
+        <button id="p-queue">قائمة التشغيل ▾</button>
+      </div>
+    </div>
   `;
   document.body.prepend(shell);
-
-  const bar = document.createElement("div");
-  bar.id = "player-bar";
-  bar.innerHTML = `
-    <div class="player-track">
-      <img id="pt-img" src="https://commons.wikimedia.org/wiki/Special:FilePath/Old%20Quran.jpg" alt="">
-      <div>
-        <div class="t1" id="pt-title">لم يتم اختيار مقطع</div>
-        <div class="t2" id="pt-sub">زاد الآخرة</div>
-      </div>
-    </div>
-    <div class="player-center">
-      <div class="player-controls">
-        <button id="p-shuffle">🔀</button>
-        <button id="p-prev">⏮</button>
-        <button class="play-main" id="p-play">▶</button>
-        <button id="p-next">⏭</button>
-        <button id="p-repeat">🔁</button>
-      </div>
-      <div class="player-seek">
-        <span id="p-cur">00:00</span>
-        <div class="bar" id="p-bar"><i id="p-bar-fill"></i></div>
-        <span id="p-dur">00:00</span>
-      </div>
-    </div>
-    <div class="player-extra">
-      <span>🔊</span>
-      <input type="range" id="p-volume" min="0" max="100" value="80">
-    </div>
-  `;
-  document.body.appendChild(bar);
-
-  const toast = document.createElement("div");
-  toast.id = "toast"; toast.className="toast";
-  document.body.appendChild(toast);
 }
 
-/* ---------------- Global Audio Player ---------------- */
-const audioEl = new Audio();
-let currentQueue = [];
-let currentIndex = -1;
+function el(id){ return document.getElementById(id); }
+function on(id, evt, fn){ const node = el(id); if(node) node[evt] = fn; }
 
-function showToast(msg){
-  const t = document.getElementById("toast");
-  t.textContent = msg; t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"), 2200);
-}
-
-function fmtTime(sec){
-  if(!isFinite(sec)) return "00:00";
-  const m = Math.floor(sec/60), s = Math.floor(sec%60);
-  return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+function fmtTime(s){
+  if(!isFinite(s) || isNaN(s)) return "00:00";
+  const m = Math.floor(s/60), ss = Math.floor(s%60);
+  return `${String(m).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
 }
 
 function playQueue(queue, index){
-  currentQueue = queue; currentIndex = index;
-  const item = currentQueue[currentIndex];
-  if(!item) return;
+  currentQueue = queue;
+  currentIndex = index;
+  const item = queue[index];
   audioEl.src = item.url;
-  audioEl.play().catch(()=>showToast("تعذّر تشغيل الصوت الآن"));
-  document.getElementById("pt-title").textContent = item.title;
-  document.getElementById("pt-sub").textContent = item.subtitle || "زاد الآخرة";
-  document.getElementById("p-play").textContent = "⏸";
+  audioEl.play().catch(()=> showToast("تعذّر تشغيل الصوت الآن"));
+  if(el("pt-title")) el("pt-title").textContent = item.title;
+  if(el("pt-sub")) el("pt-sub").textContent = item.subtitle || "زاد الآخرة";
+  if(el("p-play")) el("p-play").textContent = "⏸";
 }
 
 function playSingle(title, subtitle, url){
-  playQueue([{title,subtitle,url}], 0);
-}
-
-function togglePlay(){
-  if(!audioEl.src){ showToast("اختر مقطعًا للاستماع أولاً"); return; }
-  if(audioEl.paused){ audioEl.play(); document.getElementById("p-play").textContent="⏸"; }
-  else { audioEl.pause(); document.getElementById("p-play").textContent="▶"; }
+  playQueue([{title, subtitle, url}], 0);
 }
 
 function playNext(){
@@ -174,114 +134,147 @@ function playPrev(){
   if(currentIndex > 0){ playQueue(currentQueue, currentIndex-1); }
 }
 
+function togglePlay(){
+  if(audioEl.paused){
+    audioEl.play().catch(()=> showToast("تعذّر تشغيل الصوت الآن"));
+    if(el("p-play")) el("p-play").textContent = "⏸";
+  } else {
+    audioEl.pause();
+    if(el("p-play")) el("p-play").textContent = "▶";
+  }
+}
+
+function showToast(msg){
+  let t = document.getElementById("zad-toast");
+  if(!t){
+    t = document.createElement("div");
+    t.id = "zad-toast";
+    t.style.cssText = "position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#131f36;color:#f1eee6;padding:10px 20px;border-radius:20px;border:1px solid #c9a961;font-size:.85rem;z-index:9999;transition:opacity .3s;";
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = "1";
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>{ t.style.opacity = "0"; }, 2500);
+}
+
 function wirePlayer(){
-  document.getElementById("p-play").onclick = togglePlay;
-  document.getElementById("p-next").onclick = playNext;
-  document.getElementById("p-prev").onclick = playPrev;
-  document.getElementById("p-volume").oninput = (e)=>{ audioEl.volume = e.target.value/100; };
+  on("p-play","onclick", togglePlay);
+  on("p-next","onclick", playNext);
+  on("p-prev","onclick", playPrev);
+  const vol = el("p-volume");
+  if(vol) vol.oninput = (e)=>{ audioEl.volume = e.target.value/100; };
   audioEl.volume = 0.8;
 
   audioEl.addEventListener("timeupdate", ()=>{
-    document.getElementById("p-cur").textContent = fmtTime(audioEl.currentTime);
-    document.getElementById("p-dur").textContent = fmtTime(audioEl.duration);
+    if(el("p-cur")) el("p-cur").textContent = fmtTime(audioEl.currentTime);
+    if(el("p-dur")) el("p-dur").textContent = fmtTime(audioEl.duration);
     const pct = audioEl.duration ? (audioEl.currentTime/audioEl.duration*100) : 0;
-    document.getElementById("p-bar-fill").style.width = pct+"%";
+    if(el("p-bar-fill")) el("p-bar-fill").style.width = pct+"%";
   });
-  document.getElementById("p-bar").addEventListener("click", (e)=>{
+  const pbar = el("p-bar");
+  if(pbar) pbar.addEventListener("click", (e)=>{
     const rect = e.currentTarget.getBoundingClientRect();
     const ratio = (rect.right - e.clientX) / rect.width; // RTL
     if(audioEl.duration) audioEl.currentTime = ratio * audioEl.duration;
   });
   audioEl.addEventListener("ended", ()=>{
     if(currentIndex < currentQueue.length-1) playNext();
-    else document.getElementById("p-play").textContent="▶";
+    else if(el("p-play")) el("p-play").textContent="▶";
   });
 
-  // قائمة إذاعات احتياطية - الأولى هي إذاعة القرآن الكريم من القاهرة (المصدر الرسمي)
-  const RADIO_STATIONS = [
-    "https://stream.radiojar.com/8s5u5tpdtwzuv", // إذاعة القرآن الكريم من القاهرة
+  // راديو القرآن الكريم المباشر - عدة روابط HTTPS يتم تجربتها تلقائيًا واحدًا وراء الآخر
+  const RADIO_SOURCES = [
     "https://backup.qurango.net/radio/mix",
-    "https://stream.radiojar.com/0tpy1h0kxtzuv",
     "https://backup.qurango.net/radio/tarateel",
+    "https://stream.radiojar.com/8s5u5tpdtwzuv",
   ];
   let radioPlaying = false;
-  let radioIndex = 0;
-  let radioTrying = false;
+  let radioSourceIndex = 0;
 
-  function tryRadioStation(i){
-    if(i >= RADIO_STATIONS.length){
-      showToast("تعذّر الاتصال بأي إذاعة حاليًا، تحقق من اتصالك بالإنترنت");
-      document.getElementById("radio-play").textContent = "▶";
-      radioPlaying = false; radioTrying = false;
+  function tryRadioSource(i){
+    if(i >= RADIO_SOURCES.length){
+      console.error("زاد الآخرة: فشلت كل روابط البث المباشر المتاحة.");
+      showToast("تعذّر الاتصال بالبث المباشر حاليًا، حاول لاحقًا");
+      radioPlaying = false;
+      if(el("radio-play")) el("radio-play").textContent = "▶";
+      if(el("p-play")) el("p-play").textContent = "▶";
       return;
     }
-    radioTrying = true;
-    showToast("جارٍ الاتصال بالإذاعة...");
-    audioEl.src = RADIO_STATIONS[i];
-    document.getElementById("pt-title").textContent = "إذاعة القرآن الكريم - القاهرة";
-    document.getElementById("pt-sub").textContent = "بث مباشر";
-    audioEl.play().then(()=>{
-      radioTrying = false;
-      document.getElementById("radio-play").textContent = "⏸";
-      document.getElementById("p-play").textContent = "⏸";
-    }).catch(()=>{
-      tryRadioStation(i+1);
-    });
+    radioSourceIndex = i;
+    console.log("زاد الآخرة: تجربة رابط البث رقم", i, RADIO_SOURCES[i]);
+    audioEl.src = RADIO_SOURCES[i];
+    audioEl.load();
+    const playPromise = audioEl.play();
+    if(playPromise && playPromise.catch){
+      playPromise.catch(err=>{
+        console.error("زاد الآخرة: فشل تشغيل الرابط", RADIO_SOURCES[i], err);
+        tryRadioSource(i+1);
+      });
+    }
+    if(el("pt-title")) el("pt-title").textContent = "إذاعة القرآن الكريم";
+    if(el("pt-sub")) el("pt-sub").textContent = "بث مباشر";
   }
 
-  audioEl.addEventListener("error", ()=>{
-    if(radioPlaying){
-      tryRadioStation(++radioIndex);
+  on("radio-play","onclick", ()=>{
+    if(!radioPlaying){
+      radioPlaying = true;
+      currentQueue = []; currentIndex = -1; // البث المباشر مش جزء من قائمة تشغيل عادية
+      tryRadioSource(0);
+      if(el("radio-play")) el("radio-play").textContent = "⏸";
+      if(el("p-play")) el("p-play").textContent = "⏸";
+    } else {
+      audioEl.pause();
+      if(el("radio-play")) el("radio-play").textContent = "▶";
+      if(el("p-play")) el("p-play").textContent = "▶";
+      radioPlaying = false;
     }
   });
 
-  document.getElementById("radio-play").onclick = ()=>{
-    if(!radioPlaying){
-      radioPlaying = true;
-      radioIndex = 0;
-      currentQueue = []; currentIndex = -1; // خروج من أي قائمة تشغيل سابقة
-      tryRadioStation(0);
-    } else {
-      audioEl.pause();
-      document.getElementById("radio-play").textContent = "▶";
-      document.getElementById("p-play").textContent = "▶";
-      radioPlaying = false; radioTrying = false;
-    }
-  };
+  // لو حصل عطل فجأة أثناء التشغيل (انقطاع الشبكة أو تعطل السيرفر) جرّب الرابط التالي تلقائيًا
+  audioEl.addEventListener("error", ()=>{
+    console.error("زاد الآخرة: حدث خطأ audio element", audioEl.error);
+    if(radioPlaying) tryRadioSource(radioSourceIndex+1);
+  });
 
-  document.getElementById("listen-adhan-btn").onclick = ()=>{
-    location.href = "adhan.html";
-  };
+  on("listen-adhan-btn","onclick", ()=>{ location.href = "adhan.html"; });
 
-  document.getElementById("theme-toggle").onclick = ()=>{
-    document.body.classList.toggle("light-mode");
-  };
-  document.getElementById("share-btn").onclick = ()=>{
-    if(navigator.share){ navigator.share({title:document.title, url:location.href}); }
-    else { navigator.clipboard.writeText(location.href); showToast("تم نسخ رابط الصفحة"); }
-  };
+  on("theme-toggle","onclick", ()=>{ document.body.classList.toggle("light-mode"); });
+  on("login-btn","onclick", ()=>{ showToast("تسجيل الدخول قريبًا بإذن الله"); });
 }
 
-/* ---------------- Prayer Times ---------------- */
-const PRAYER_NAMES = {Fajr:"الفجر", Sunrise:"الشروق", Dhuhr:"الظهر", Asr:"العصر", Maghrib:"المغرب", Isha:"العشاء"};
+function initPrayerTimes(){
+  if(!navigator.geolocation){
+    loadPrayerTimes(30.0444, 31.2357, "القاهرة (افتراضي)");
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos => loadPrayerTimes(pos.coords.latitude, pos.coords.longitude, "موقعك الحالي"),
+    () => loadPrayerTimes(30.0444, 31.2357, "القاهرة (افتراضي)")
+  );
+}
 
 function loadPrayerTimes(lat, lng, cityLabel){
+  if(!document.getElementById("prayer-list")) return; // اللوحة غير موجودة في هذه الصفحة
   const method = localStorage.getItem("zad_calc_method") || "4";
   const url = `https://api.aladhan.com/v1/timings/${Math.floor(Date.now()/1000)}?latitude=${lat}&longitude=${lng}&method=${method}`;
   fetch(url).then(r=>r.json()).then(data=>{
     const t = data.data.timings;
-    document.getElementById("prayer-location").textContent = cityLabel;
+    if(document.getElementById("prayer-location")) document.getElementById("prayer-location").textContent = cityLabel;
     const list = document.getElementById("prayer-list");
-    const now = new Date();
-    let nextName=null, nextDate=null;
+    if(!list) return;
     list.innerHTML = "";
-    Object.keys(PRAYER_NAMES).forEach(key=>{
+    const now = new Date();
+    let nextName = null, nextDate = null;
+    ["Fajr","Sunrise","Dhuhr","Asr","Maghrib","Isha"].forEach(key=>{
       const timeStr = t[key].split(" ")[0];
       const [h,m] = timeStr.split(":").map(Number);
       const d = new Date(); d.setHours(h,m,0,0);
       if(!nextDate && d > now){ nextDate = d; nextName = key; }
+
       const row = document.createElement("div");
       row.className = "prayer-row";
+      row.dataset.key = key;
       row.innerHTML = `<span class="name">${PRAYER_NAMES[key]}</span><span class="time">${timeStr}</span>`;
       list.appendChild(row);
     });
@@ -291,90 +284,35 @@ function loadPrayerTimes(lat, lng, cityLabel){
       const [h,m] = t.Fajr.split(" ")[0].split(":").map(Number);
       nextDate.setHours(h,m,0,0);
     }
-    document.getElementById("next-prayer-name").textContent = PRAYER_NAMES[nextName];
-    document.getElementById("countdown-label").textContent = `الوقت المتبقي لصلاة ${PRAYER_NAMES[nextName]}`;
+    const nextRow = list.querySelector(`[data-key="${nextName}"]`);
+    if(nextRow) nextRow.classList.add("active");
+    if(el("next-prayer-name")) el("next-prayer-name").textContent = PRAYER_NAMES[nextName];
+    if(el("countdown-label")) el("countdown-label").textContent = `الوقت المتبقي لصلاة ${PRAYER_NAMES[nextName]}`;
 
     setInterval(()=>{
       const diff = nextDate - new Date();
-      if(diff<=0){ document.getElementById("countdown-val").textContent="00:00:00"; return; }
-      const hh = String(Math.floor(diff/3600000)).padStart(2,"0");
-      const mm = String(Math.floor(diff/60000)%60).padStart(2,"0");
-      const ss = String(Math.floor(diff/1000)%60).padStart(2,"0");
-      document.getElementById("countdown-val").textContent = `${hh}:${mm}:${ss}`;
+      const val = diff<=0 ? "00:00:00" : (()=>{
+        const hh = String(Math.floor(diff/3600000)).padStart(2,"0");
+        const mm = String(Math.floor(diff/60000)%60).padStart(2,"0");
+        const ss = String(Math.floor(diff/1000)%60).padStart(2,"0");
+        return `${hh}:${mm}:${ss}`;
+      })();
+      if(el("countdown-val")) el("countdown-val").textContent = val;
     }, 1000);
   }).catch(()=>{
-    document.getElementById("prayer-list").innerHTML = `<div class="empty-msg">تعذّر تحميل المواقيت (تحقق من الاتصال بالإنترنت)</div>`;
+    const l = document.getElementById("prayer-list");
+    if(l) l.innerHTML = `<div class="empty-msg">تعذّر تحميل المواقيت (تحقق من الاتصال بالإنترنت)</div>`;
   });
 }
 
-function initPrayerTimes(){
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(
-      pos=>loadPrayerTimes(pos.coords.latitude, pos.coords.longitude, "موقعك الحالي"),
-      ()=>loadPrayerTimes(21.4225, 39.8262, "مكة المكرمة (افتراضي)"),
-      {timeout:6000}
-    );
-  } else {
-    loadPrayerTimes(21.4225, 39.8262, "مكة المكرمة (افتراضي)");
-  }
-}
-
-/* ---------------- Favorites (localStorage) ---------------- */
-function getFavorites(){
-  try{ return JSON.parse(localStorage.getItem("zad_favorites")||"[]"); }catch(e){ return []; }
-}
-function isFavorite(url){
-  return getFavorites().some(f=>f.url===url);
-}
-function toggleFavorite(item){
-  let favs = getFavorites();
-  if(favs.some(f=>f.url===item.url)){
-    favs = favs.filter(f=>f.url!==item.url);
-    showToast("تمت الإزالة من المفضلة");
-  } else {
-    favs.push(item);
-    showToast("أُضيف إلى المفضلة 🤍");
-  }
-  localStorage.setItem("zad_favorites", JSON.stringify(favs));
-}
-
-/* ---------------- Visitor Counter ---------------- */
-function initVisitorCounter(){
-  const KEY = "zad-alakhera-quran-site-visits-2026";
-  const el = document.getElementById("visitor-count");
-  if(!el) return;
-
-  // نجرب أكتر من خدمة عداد مجانية بالترتيب، لو الأولى فشلت أو ما ردتش بسرعة
-  const sources = [
-    ()=> fetch(`https://countapi.mileshilliard.com/api/v1/hit/${KEY}`).then(r=>r.json()).then(d=>Number(d.value)),
-    ()=> fetch(`https://api.counterapi.dev/v1/zad-alakhera/${KEY}/up`).then(r=>r.json()).then(d=>Number(d.count ?? d.value ?? d.data?.up_count)),
-    ()=> fetch(`https://api.countapi.xyz/hit/zad-alakhera.pages.dev/${KEY}`).then(r=>r.json()).then(d=>Number(d.value)),
-  ];
-
-  function tryNext(i){
-    if(i >= sources.length){
-      // كل الخدمات الخارجية فشلت - نستخدم عداد محلي بسيط كحل أخير حتى لا يظل العداد فارغًا
-      let local = Number(localStorage.getItem("zad_local_visits")||"0") + 1;
-      localStorage.setItem("zad_local_visits", local);
-      el.textContent = local.toLocaleString("ar-EG") + "*";
-      el.title = "تعذر الاتصال بخدمة العداد العالمية، هذا عداد تقريبي محلي لهذا المتصفح فقط";
-      return;
-    }
-    const timeout = new Promise((_,rej)=>setTimeout(()=>rej("timeout"), 5000));
-    Promise.race([sources[i](), timeout])
-      .then(val=>{
-        if(!isFinite(val) || val<=0){ tryNext(i+1); return; }
-        el.textContent = val.toLocaleString("ar-EG");
-      })
-      .catch(()=> tryNext(i+1));
-  }
-  tryNext(0);
+function surahAudioUrl(reciterId, surahNum){
+  const n = String(surahNum).padStart(3,"0");
+  return `https://server8.mp3quran.net/${reciterId}/${n}.mp3`;
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
   buildShell();
   wirePlayer();
   initPrayerTimes();
-  initVisitorCounter();
   if(typeof renderPage === "function") renderPage();
 });
