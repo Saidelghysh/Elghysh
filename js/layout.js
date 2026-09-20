@@ -310,6 +310,31 @@ function surahAudioUrl(reciterId, surahNum){
   return `https://server8.mp3quran.net/${reciterId}/${n}.mp3`;
 }
 
+/* ---------- المفضلة (localStorage) ---------- */
+function getFavorites(){
+  try{
+    return JSON.parse(localStorage.getItem("zad_favorites") || "[]");
+  }catch(e){ return []; }
+}
+function saveFavorites(list){
+  localStorage.setItem("zad_favorites", JSON.stringify(list));
+}
+function isFavorite(url){
+  return getFavorites().some(f=>f.url === url);
+}
+function toggleFavorite(item){
+  const list = getFavorites();
+  const idx = list.findIndex(f=>f.url === item.url);
+  if(idx >= 0){
+    list.splice(idx,1);
+    showToast("تم الحذف من المفضلة");
+  } else {
+    list.push(item);
+    showToast("تمت الإضافة إلى المفضلة 💚");
+  }
+  saveFavorites(list);
+}
+
 document.addEventListener("DOMContentLoaded", ()=>{
   buildShell();
   wirePlayer();
