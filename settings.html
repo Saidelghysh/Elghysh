@@ -46,6 +46,15 @@ function renderPage(){
       <select id="default-reciter" style="width:100%; background:var(--bg-elevated); border:1px solid var(--border); color:var(--text-main); padding:12px 16px; border-radius:10px;"></select>
     </div>
     <div class="text-card">
+      <h3 style="color:var(--gold-light); margin-bottom:10px;">الموقع (لحساب مواقيت الصلاة)</h3>
+      <p style="color:var(--text-muted); font-size:.85rem; margin-bottom:14px;" id="current-location-label">جارٍ التحقق...</p>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <input id="location-search" placeholder="اكتب اسم المدينة (مثال: القاهرة، الرياض، دبي)" style="flex:1; background:var(--bg-elevated); border:1px solid var(--border); color:var(--text-main); padding:12px 16px; border-radius:10px;">
+        <button id="location-search-btn" class="hero-btn">بحث</button>
+      </div>
+      <button id="use-gps-btn" style="width:100%; padding:11px; border-radius:10px; background:var(--bg-elevated); border:1px solid var(--border); color:var(--text-main); font-weight:700;">📍 استخدام موقعي الحالي (GPS)</button>
+    </div>
+    <div class="text-card">
       <h3 style="color:var(--gold-light); margin-bottom:14px;">طريقة حساب مواقيت الصلاة</h3>
       <select id="calc-method" style="width:100%; background:var(--bg-elevated); border:1px solid var(--border); color:var(--text-main); padding:12px 16px; border-radius:10px;">
         <option value="4">أم القرى - مكة المكرمة</option>
@@ -65,6 +74,61 @@ function renderPage(){
   RECITERS.forEach(r=>{ const o=document.createElement("option"); o.value=r.id; o.textContent=r.name; sel.appendChild(o); });
   sel.value = localStorage.getItem("zad_default_reciter") || RECITERS[0].id;
   sel.onchange = ()=>{ localStorage.setItem("zad_default_reciter", sel.value); showToast("تم الحفظ"); };
+
+  // ---- الموقع (لحساب مواقيت الصلاة) ----
+  function renderCurrentLocationLabel(){
+    const lbl = document.getElementById("current-location-label");
+    if(!lbl) return;
+    const saved = localStorage.getItem("zad_location");
+    if(saved){
+      try{
+        const loc = JSON.parse(saved);
+        lbl.textContent = "الموقع الحالي: " + (loc.label || "محفوظ يدويًا");
+      }catch(e){ lbl.textContent = "الموقع الحالي: تحديد تلقائي (GPS)"; }
+    } else {
+      lbl.textContent = "الموقع الحالي: تحديد تلقائي (GPS)";
+    }
+  }
+  renderCurrentLocationLabel();
+
+  const searchBtn = document.getElementById("location-search-btn");
+  const searchInput = document.getElementById("location-search");
+  async function doLocationSearch(){
+    const q = searchInput.value.trim();
+    if(!q){ showToast("اكتب اسم مدينة أولاً"); return; }
+    searchBtn.textContent = "جارٍ البحث...";
+    searchBtn.disabled = true;
+    try{
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=ar&q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      if(!data || !data.length){
+        showToast("لم يتم العثور على هذا المكان، جرّب اسمًا مختلفًا");
+      } else {
+        const place = data[0];
+        const loc = {
+          label: (place.display_name || q).split(",")[0].trim(),
+          lat: parseFloat(place.lat),
+          lng: parseFloat(place.lon)
+        };
+        localStorage.setItem("zad_location", JSON.stringify(loc));
+        renderCurrentLocationLabel();
+        showToast("تم حفظ الموقع: " + loc.label + " — سيُطبَّق في الصفحة الرئيسية");
+        searchInput.value = "";
+      }
+    }catch(e){
+      showToast("تعذّر البحث، تحقق من اتصال الإنترنت");
+    }
+    searchBtn.textContent = "بحث";
+    searchBtn.disabled = false;
+  }
+  searchBtn.onclick = doLocationSearch;
+  searchInput.addEventListener("keydown", (e)=>{ if(e.key === "Enter") doLocationSearch(); });
+
+  document.getElementById("use-gps-btn").onclick = ()=>{
+    localStorage.removeItem("zad_location");
+    renderCurrentLocationLabel();
+    showToast("تم التفعيل التلقائي عبر GPS — سيُطبَّق في الصفحة الرئيسية");
+  };
 
   const method = document.getElementById("calc-method");
   method.value = localStorage.getItem("zad_calc_method") || "4";

@@ -270,12 +270,22 @@ function wirePlayer(){
 }
 
 function initPrayerTimes(){
+  const saved = localStorage.getItem("zad_location");
+  if(saved){
+    try{
+      const loc = JSON.parse(saved);
+      if(loc && typeof loc.lat === "number" && typeof loc.lng === "number"){
+        loadPrayerTimes(loc.lat, loc.lng, loc.label || "موقع محفوظ");
+        return;
+      }
+    }catch(e){ /* تجاهل بيانات تالفة والانتقال لتحديد الموقع تلقائيًا */ }
+  }
   if(!navigator.geolocation){
     loadPrayerTimes(30.0444, 31.2357, "القاهرة (افتراضي)");
     return;
   }
   navigator.geolocation.getCurrentPosition(
-    pos => loadPrayerTimes(pos.coords.latitude, pos.coords.longitude, "موقعك الحالي"),
+    pos => loadPrayerTimes(pos.coords.latitude, pos.coords.longitude, "موقعك الحالي (GPS)"),
     () => loadPrayerTimes(30.0444, 31.2357, "القاهرة (افتراضي)")
   );
 }
