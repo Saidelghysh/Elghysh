@@ -8,31 +8,6 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div id="offline-fallback" style="display:none; position:fixed; inset:0; z-index:9999; background:#0a1120; color:#f1eee6; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; font-family:'Tajawal',sans-serif;">
-  <div style="font-size:3rem; margin-bottom:16px;">🕌</div>
-  <h2 style="color:#e3cb8f; margin-bottom:10px; font-size:1.3rem;">عذرًا، حدثت مشكلة في تحميل الموقع</h2>
-  <p style="color:#8a93a8; max-width:420px; line-height:1.9; margin-bottom:22px;">
-    قد يكون السبب ضعف أو انقطاع في اتصالك بالإنترنت، أو أن الموقع يمر حاليًا بأعمال تحديث وصيانة بسيطة.
-    برجاء التأكد من اتصالك بالإنترنت والمحاولة مرة أخرى بعد قليل.
-  </p>
-  <button onclick="location.reload()" style="background:#c9a961; color:#1a1406; font-weight:700; padding:11px 28px; border-radius:30px; border:none; font-size:.95rem; cursor:pointer; font-family:inherit;">
-    🔄 إعادة المحاولة
-  </button>
-</div>
-<script>
-  (function(){
-    function showFallback(){
-      var el = document.getElementById("offline-fallback");
-      if(el) el.style.display = "flex";
-    }
-    setTimeout(function(){
-      if(!document.getElementById("app-shell")){ showFallback(); }
-    }, 5000);
-    window.addEventListener("offline", showFallback);
-  })();
-</script>
-
-
 <script>
 function renderPage(){
   const c = document.getElementById("page-content");
@@ -125,9 +100,32 @@ function renderPage(){
   searchInput.addEventListener("keydown", (e)=>{ if(e.key === "Enter") doLocationSearch(); });
 
   document.getElementById("use-gps-btn").onclick = ()=>{
-    localStorage.removeItem("zad_location");
-    renderCurrentLocationLabel();
-    showToast("تم التفعيل التلقائي عبر GPS — سيُطبَّق في الصفحة الرئيسية");
+    const btn = document.getElementById("use-gps-btn");
+    if(!navigator.geolocation){
+      showToast("متصفحك لا يدعم تحديد الموقع");
+      return;
+    }
+    btn.textContent = "⏳ جارٍ طلب الإذن...";
+    btn.disabled = true;
+    navigator.geolocation.getCurrentPosition(
+      (pos)=>{
+        localStorage.removeItem("zad_location"); // نرجع للوضع التلقائي، والمتصفح هيحفظ إذنه بنفسه
+        renderCurrentLocationLabel();
+        showToast("تم تفعيل GPS بنجاح ✅ — سيُطبَّق في الصفحة الرئيسية");
+        btn.textContent = "📍 استخدام موقعي الحالي (GPS)";
+        btn.disabled = false;
+      },
+      (err)=>{
+        let msg = "تعذّر الحصول على الموقع";
+        if(err.code === 1) msg = "تم رفض إذن الموقع من إعدادات المتصفح — افتح إعدادات الموقع في المتصفح وفعّل إذن الموقع لهذا الموقع يدويًا";
+        else if(err.code === 2) msg = "تعذّر تحديد موقعك حاليًا (تحقق من تفعيل GPS بالجهاز)";
+        else if(err.code === 3) msg = "انتهت مهلة تحديد الموقع، حاول مرة أخرى";
+        showToast(msg);
+        btn.textContent = "📍 استخدام موقعي الحالي (GPS)";
+        btn.disabled = false;
+      },
+      {timeout: 15000}
+    );
   };
 
   const method = document.getElementById("calc-method");

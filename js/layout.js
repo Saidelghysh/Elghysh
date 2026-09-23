@@ -284,12 +284,39 @@ function initPrayerTimes(){
     loadPrayerTimes(30.0444, 31.2357, "القاهرة (افتراضي)");
     return;
   }
+  // نطلب إذن الموقع مباشرة من المتصفح فور تحميل الصفحة
   navigator.geolocation.getCurrentPosition(
     pos => loadPrayerTimes(pos.coords.latitude, pos.coords.longitude, "موقعك الحالي (GPS)"),
-    () => loadPrayerTimes(30.0444, 31.2357, "القاهرة (افتراضي)")
+    (err) => {
+      loadPrayerTimes(30.0444, 31.2357, "القاهرة (افتراضي)");
+      showLocationPrompt(); // المستخدم لم يوافق أو حصل خطأ - نعرض زر واضح لطلب الإذن يدويًا
+    }
   );
 }
 
+function showLocationPrompt(){
+  const sub = document.getElementById("prayer-location");
+  if(!sub || document.getElementById("enable-location-btn")) return;
+  const btn = document.createElement("button");
+  btn.id = "enable-location-btn";
+  btn.textContent = "📍 فعّل الموقع لمواقيت أدق";
+  btn.style.cssText = "display:block; width:100%; margin-top:8px; padding:8px; border-radius:8px; background:var(--gold-dim); border:1px solid var(--gold); color:var(--gold-light); font-size:.78rem; font-weight:700;";
+  btn.onclick = ()=>{
+    btn.textContent = "⏳ جارٍ الطلب...";
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        loadPrayerTimes(pos.coords.latitude, pos.coords.longitude, "موقعك الحالي (GPS)");
+        btn.remove();
+        showToast("تم تفعيل الموقع بنجاح ✅");
+      },
+      () => {
+        showToast("لم تتم الموافقة — يمكنك تفعيلها من إعدادات المتصفح، أو اختيار مدينتك يدويًا من صفحة الإعدادات");
+        btn.textContent = "📍 فعّل الموقع لمواقيت أدق";
+      }
+    );
+  };
+  sub.after(btn);
+}
 function loadPrayerTimes(lat, lng, cityLabel){
   if(!document.getElementById("prayer-list")) return; // اللوحة غير موجودة في هذه الصفحة
   const method = localStorage.getItem("zad_calc_method") || "4";
